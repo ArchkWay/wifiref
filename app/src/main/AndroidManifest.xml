@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.refactoringwnamqos">
 
@@ -27,12 +28,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <!--<activity-->
-            <!--android:name=".wifi.WF_permissions" />-->
-        <!--<activity-->
-            <!--android:name=".phone.RPS_PermissionActivity"-->
-            <!--android:label="@string/title_activity_permission"-->
-            <!--android:theme="@style/AppTheme.NoActionBar" />-->
+        <activity
+            android:name=".wifi.WF_permissions" />
+        <activity
+            android:name=".phone.RPS_PermissionActivity"
+            android:label="@string/title_activity_permission"
+            android:theme="@style/AppTheme"
+            />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,10 +42,9 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".WorkService" />
+        <service android:name=".services.WorkService" />
 
-        <receiver android:name=".service.StartBroadReceiv">
-
+        <receiver android:name=".services.StartBroadReceiv">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />

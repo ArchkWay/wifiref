@@ -1,6 +1,6 @@
 package com.example.refactoringwnamqos.measurments;
 
-import com.example.refactoringwnamqos.measurments.jSendMeasurement.TCOMMAN_X_ID;
+import com.example.refactoringwnamqos.enteties.modelJson.jMeasurement.jSendMeasurement.TCOMMAN_X_ID;
 
 import java.util.List;
 

@@ -1,11 +1,11 @@
 package com.example.refactoringwnamqos.businessLogic;
 
-import com.example.refactoringwnamqos.AllInterface;
-import com.example.refactoringwnamqos.WorkWithLog;
+import com.example.refactoringwnamqos.intefaces.AllInterface;
+import com.example.refactoringwnamqos.logs.WorkWithLog;
 import com.example.refactoringwnamqos.enteties.LogItem;
 import com.example.refactoringwnamqos.enteties.jGetAll.FGetAllData;
 import com.example.refactoringwnamqos.measurments.MeanObject;
-import com.example.refactoringwnamqos.measurments.jSendMeasurement.TCOMMAN_X_ID;
+import com.example.refactoringwnamqos.enteties.modelJson.jMeasurement.jSendMeasurement.TCOMMAN_X_ID;
 
 import java.util.ArrayList;
 import java.util.List;

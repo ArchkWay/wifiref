@@ -2,19 +2,19 @@ package com.example.refactoringwnamqos.measurments;
 
 import android.util.Log;
 
+import com.example.refactoringwnamqos.intefaces.AllInterface;
+import com.example.refactoringwnamqos.businessLogic.RegOnServise;
+import com.example.refactoringwnamqos.enteties.LogItem;
+import com.example.refactoringwnamqos.intefaces.ISendMeasurement;
+import com.example.refactoringwnamqos.enteties.modelJson.jMeasurement.jSendMeasurement.FSendMeasurement;
+import com.example.refactoringwnamqos.websocket.base.WSClient;
+import com.example.refactoringwnamqos.intefaces.ILoadMeasurCallback;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import ew8s.com.wnamqos.AllInterface;
-import ew8s.com.wnamqos.businessLogic.RegOnServise;
-import ew8s.com.wnamqos.log.LogItem;
-import ew8s.com.wnamqos.measurement.MeanObject;
-import ew8s.com.wnamqos.websocket.base.WSClient;
-import ew8s.com.wnamqos.websocket.model.mMeasurement.ILoadMeasurCallback;
-import ew8s.com.wnamqos.websocket.modelJson.jMeasurement.jSendMeasurement.FSendMeasurement;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -22,7 +22,7 @@ import ua.naiksoftware.stomp.dto.StompCommand;
 import ua.naiksoftware.stomp.dto.StompHeader;
 import ua.naiksoftware.stomp.dto.StompMessage;
 
-public class SendMeasurement implements ISendMeasurement{
+public class SendMeasurement implements ISendMeasurement {
     public static final String TAG = "WSClient";
     private WSClient wsClient;
     private Gson mGson = new GsonBuilder().create();

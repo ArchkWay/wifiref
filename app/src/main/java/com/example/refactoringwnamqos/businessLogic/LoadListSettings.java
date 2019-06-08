@@ -1,17 +1,18 @@
 package com.example.refactoringwnamqos.businessLogic;
 
+import com.example.refactoringwnamqos.intefaces.AllInterface;
+import com.example.refactoringwnamqos.InfoAboutMe;
+import com.example.refactoringwnamqos.services.WorkService;
+import com.example.refactoringwnamqos.enteties.LogItem;
+import com.example.refactoringwnamqos.measurments.ScheduleMeasurement;
+import com.example.refactoringwnamqos.phone.PhoneState;
+import com.example.refactoringwnamqos.intefaces.IWSClient;
+import com.example.refactoringwnamqos.websocket.base.WSClient;
+import com.example.refactoringwnamqos.wifi.Wifi;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
-import ew8s.com.wnamqos.AllInterface;
-import ew8s.com.wnamqos.InfoAboutMe;
-import ew8s.com.wnamqos.log.LogItem;
-import ew8s.com.wnamqos.measurement.schedule.ScheduleMeasurement;
-import ew8s.com.wnamqos.phone.PhoneState;
-import ew8s.com.wnamqos.service.WorkService;
-import ew8s.com.wnamqos.websocket.base.IWSClient;
-import ew8s.com.wnamqos.websocket.base.WSClient;
-import ew8s.com.wnamqos.wifi.Wifi;
 import ua.naiksoftware.stomp.StompClient;
 
 public class LoadListSettings implements IWSClient, ILoadTaskCompleted {
@@ -63,7 +64,7 @@ public class LoadListSettings implements IWSClient, ILoadTaskCompleted {
             scheduleMeasurement.start(job);
             RegOnServise.isConnectinAfterMeasumerent = true;
         } else{
-           AllInterface.iReconnectStomp.success();
+            AllInterface.iReconnectStomp.success();
         }
     }
 

@@ -1,11 +1,14 @@
 package com.example.refactoringwnamqos.websocket.base;
 
+import com.example.refactoringwnamqos.intefaces.AllInterface;
+import com.example.refactoringwnamqos.InfoAboutMe;
+import com.example.refactoringwnamqos.enteties.LogItem;
+import com.example.refactoringwnamqos.intefaces.ISWClientConnect;
+import com.example.refactoringwnamqos.intefaces.IWSClient;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import ew8s.com.wnamqos.AllInterface;
-import ew8s.com.wnamqos.InfoAboutMe;
-import ew8s.com.wnamqos.log.LogItem;
 import io.reactivex.CompletableTransformer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -15,7 +18,7 @@ import ua.naiksoftware.stomp.Stomp;
 import ua.naiksoftware.stomp.StompClient;
 import ua.naiksoftware.stomp.dto.StompHeader;
 
-public class WSClient implements ISWClientConnect{
+public class WSClient implements ISWClientConnect {
 
     private static final int SCHEDULER_INTERVAL = 1;
 
