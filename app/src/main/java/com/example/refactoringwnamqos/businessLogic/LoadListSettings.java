@@ -2,6 +2,7 @@ package com.example.refactoringwnamqos.businessLogic;
 
 import com.example.refactoringwnamqos.intefaces.AllInterface;
 import com.example.refactoringwnamqos.InfoAboutMe;
+import com.example.refactoringwnamqos.intefaces.ILoadTaskCompleted;
 import com.example.refactoringwnamqos.services.WorkService;
 import com.example.refactoringwnamqos.enteties.LogItem;
 import com.example.refactoringwnamqos.measurments.ScheduleMeasurement;

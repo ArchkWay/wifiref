@@ -1,8 +1,6 @@
 package com.example.refactoringwnamqos.intefaces;
 
 
-import com.example.refactoringwnamqos.businessLogic.IReconnectStomp;
-
 public class AllInterface {
 
     public static ILog iLog;
@@ -11,5 +9,5 @@ public class AllInterface {
     public static ISendMeasurement iSendMeasurement;
     public static ISWClientConnect iswClientConnect;
     public static IReconnectStomp iReconnectStomp;
-    public static IScheduleMeasumerent iScheduleMeasumerent;
+    public static IScheduleMeasurement iScheduleMeasurement;
 }

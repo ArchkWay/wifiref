@@ -1,9 +1,13 @@
 package com.example.refactoringwnamqos.measurments;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.example.refactoringwnamqos.intefaces.AllInterface;
-import com.example.refactoringwnamqos.businessLogic.IReconnectStomp;
+import com.example.refactoringwnamqos.intefaces.IReconnectStomp;
 import com.example.refactoringwnamqos.businessLogic.JobToMerge;
 import com.example.refactoringwnamqos.businessLogic.RegOnServise;
 import com.example.refactoringwnamqos.enteties.LogItem;
@@ -35,7 +39,7 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
     private int mCurrentConutCommands = 0;
     private Timer timer;
     private TimerTask timerTask;
-    private boolean connectWifi = false;
+    private boolean connectWifi;
 
     private static final String TAG = "Measurement";
 
@@ -83,31 +87,31 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
 
     private void start(){
 
-        if(mCurrentConutCommands<mCountCommands){
+        if(mCurrentConutCommands < mCountCommands){
             String type = findMetodMeasurement(mCommands.get(mCurrentConutCommands));
             switch (type){
                 case "SCAN_WIFI":
-                    AllInterface.iLog.addToLog(new LogItem("Измерения "+mCurrentConutCommands,"Сканирование сетей", null));
+                    AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands,"Сканирование сетей", null));
                     scanWifi2();
                     break;
                 case "ASSOC_SSID":
-                    AllInterface.iLog.addToLog(new LogItem("Измерения "+mCurrentConutCommands,"Подлючение к сети", null));
+                    AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands,"Подлючение к сети", null));
                     assoc_ssid();
                     break;
                 case "GET_IPPARAMS":
-                    AllInterface.iLog.addToLog(new LogItem("Измерения "+mCurrentConutCommands,"Зарос сетевых параметров", null));
+                    AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands,"Зарос сетевых параметров", null));
                     get_ipparams();
                     break;
                 case "WAIT":
-                    AllInterface.iLog.addToLog(new LogItem("Измерения "+mCurrentConutCommands,"Ожидание", null));
+                    AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands,"Ожидание", null));
                     waitTime();
                     break;
                 case "WEBAUTH":
-                    AllInterface.iLog.addToLog(new LogItem("Измерения "+mCurrentConutCommands,"Вебавторизвция", null));
+                    AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands,"Вебавторизвция", null));
                     webAuth();
                     break;
                 case "TEST_INTERNET":
-                    AllInterface.iLog.addToLog(new LogItem("Измерения "+mCurrentConutCommands,"Тестирование интеренета", null));
+                    AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands,"Тестирование интеренета", null));
                     testInternet();
                     break;
                 case "GET_FILE":
@@ -115,21 +119,21 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
                     downloadFile();
                     break;
                 default:
-                    AllInterface.iLog.addToLog(new LogItem("Измерения "+mCurrentConutCommands,"Команда не поддерживается", null));
+                    AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands,"Команда не поддерживается", null));
                     mCurrentConutCommands++;
                     start();
             }
         } else{
             mMeanObject.setEnd(getTime());
-            AllInterface.iLog.addToLog(new LogItem("Измерения "+mCurrentConutCommands,"Измерение завершено", null));
+            AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands,"Измерение завершено", null));
             AllInterface.iWifi.disableWifi();
 
             if(timer != null){
                 timer.cancel();
-                timer=null;
+                timer = null;
             }
 
-            timer=new Timer();
+            timer = new Timer();
             timerTask = new TimerTask() {
                 @Override
                 public void run() {
@@ -149,10 +153,13 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
         TCOMMAN_X_ID tcommanXId = mMeanObject.getResults().get(mCurrentConutCommands);
         tcommanXId.setBegin(getTime());
         int timeout = mCommands.get(mCurrentConutCommands).getTimeout();
+//        setConnectWifi(true);//testing
         if(connectWifi){
             TestInternet testInternet = new TestInternet();
             boolean test = testInternet.executeCommand();
-            if(test) tcommanXId.setOutput("OK");
+            if(test) {
+                tcommanXId.setOutput("OK");
+            }
             else tcommanXId.setOutput("ERROR");
 
         } else{
@@ -229,7 +236,10 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
         tcommanXId.setOutput(wifiInfoObject);
         tcommanXId.setEnd(getTime());
         String str = wifiInfoObject.getIpaddr();
-        if (str.equals("NaN")) connectWifi = false;
+        if (str.equals("NaN")){
+            connectWifi = false;
+        }
+        else connectWifi = true;
 
 
 
@@ -306,6 +316,7 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
 
     //----------------------------------------------------
     private void downloadFile(){
+
         FGetTaskCommands command = mCommands.get(mCurrentConutCommands);
         TCOMMAN_X_ID tcommanXId = mMeanObject.getResults().get(mCurrentConutCommands);
         tcommanXId.setBegin(getTime());

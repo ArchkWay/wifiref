@@ -10,8 +10,8 @@ import java.util.TimerTask;
 public class RefreshAction implements IRefreshCallBack {
     @Override
     public void refCallBack(int state) {
-        if(AllInterface.iScheduleMeasumerent != null)
-            AllInterface.iScheduleMeasumerent.stopSchedule();
+        if(AllInterface.iScheduleMeasurement != null)
+            AllInterface.iScheduleMeasurement.stopSchedule();
 
         if(AllInterface.iswClientConnect != null)
             AllInterface.iswClientConnect.shutdown();

@@ -35,7 +35,6 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
     WorkWithLog workWithLog;
     private static final String TAG = "MainActivity";
     Button button;
-    boolean test = true;
 
 
     @Override
@@ -44,26 +43,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
         setContentView(R.layout.activity_main);
         InfoAboutMe.context = getApplicationContext();
         button = findViewById(R.id.btnDoWork);
-        String line = null;
-
-        try {
-            Process p = Runtime.getRuntime().exec("sh");
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(p.getInputStream()));
-
-            DataOutputStream out = new DataOutputStream(p.getOutputStream());
-            out.writeBytes("cat /sys/class/net/wlan0/address\n");
-            out.writeBytes("exit\n");
-            out.flush();
-
-            while ((line = in.readLine()) != null) {
-                System.out.println(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
+        writingLogs();
         recyclerView = findViewById(R.id.recycler_view);
         initRecyclerView();
         workWithLog = WorkWithLog.getInstance(getApplicationContext());
@@ -80,21 +60,21 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
         }
         button = findViewById(R.id.btnDoWork);
         button.setOnClickListener(v -> startService());
-//        final Handler handler = new Handler();
-//        handler.postDelayed(() -> startService(), 30000);
-//        startService();
+        final Handler handler = new Handler();
+        handler.postDelayed(() -> startService(), 13000);
     }
 
     public void startService() {
         if(WorkService.isSeviceStart) {
-            button.setText("Завершить работу");
+            button.setText("Запустить работу");
             WorkService.isSeviceStart = false;
             getApplication().stopService(new Intent(getApplicationContext(), WorkService.class));
-            if(AllInterface.iScheduleMeasumerent != null) AllInterface.iScheduleMeasumerent.stopSchedule();
+            if(AllInterface.iScheduleMeasurement != null) AllInterface.iScheduleMeasurement.stopSchedule();
 
         }
         else {
-            button.setText("Запустить работу");
+            button.setText("Завершить работу");
+            WorkService.isSeviceStart = true;
             Intent serviceIntent = new Intent(this, WorkService.class);
             ContextCompat.startForegroundService(this, serviceIntent);
         }
@@ -123,22 +103,28 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
 
     @Override
     public void updateRecycler() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                recyclerViewLog.notifyDataSetChanged();
-            }
-        });
+        runOnUiThread(() -> recyclerViewLog.notifyDataSetChanged());
     }
 
     public void showToast(String str){
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(MainActivity.this, str, Toast.LENGTH_SHORT).show();
-            }
-        });
+        runOnUiThread(() -> Toast.makeText(MainActivity.this, str, Toast.LENGTH_SHORT).show());
     }
-
+    public void writingLogs(){
+        String line;
+        try {
+            Process p = Runtime.getRuntime().exec("sh");
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(p.getInputStream()));
+            DataOutputStream out = new DataOutputStream(p.getOutputStream());
+            out.writeBytes("cat /sys/class/net/wlan0/address\n");
+            out.writeBytes("exit\n");
+            out.flush();
+            while ((line = in.readLine()) != null) {
+                System.out.println(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

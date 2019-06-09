@@ -15,12 +15,12 @@ public class TestInternet {
         try {
             Process mIpAddrProcess = runtime.exec("/system/bin/ping -c 8.8.8.8");
             int mExitValue = mIpAddrProcess.waitFor();
-            System.out.println(" mExitValue "+mExitValue);
+            System.out.println(" mExitValue " + mExitValue);
 
             if(mExitValue == 0){
-                return true;
-            } else{
                 return false;
+            } else{
+                return true;
             }
         } catch (IOException e) {
             e.printStackTrace();

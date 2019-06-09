@@ -1,6 +1,7 @@
 package com.example.refactoringwnamqos.businessLogic;
 
 import com.example.refactoringwnamqos.intefaces.IGetTaskCallBack;
+import com.example.refactoringwnamqos.intefaces.ILoadTaskCompleted;
 import com.example.refactoringwnamqos.services.WorkService;
 import com.example.refactoringwnamqos.enteties.jGetAll.FGetAll;
 import com.example.refactoringwnamqos.enteties.jGetAll.FGetAllData;
@@ -11,7 +12,7 @@ import com.example.refactoringwnamqos.websocket.base.WSClient;
 import com.example.refactoringwnamqos.websocket.model.mGetAll.GetAll;
 import com.example.refactoringwnamqos.websocket.model.mGetAll.IAllCallback;
 import com.example.refactoringwnamqos.intefaces.IRegCallBack;
-import com.example.refactoringwnamqos.websocket.model.Registerrr;
+import com.example.refactoringwnamqos.websocket.model.Registration;
 import com.example.refactoringwnamqos.websocket.model.Refresh;
 import com.example.refactoringwnamqos.websocket.model.mTask.GetTask;
 
@@ -44,9 +45,9 @@ public class RegOnServise implements IRegCallBack, IAllCallback, IGetTaskCallBac
     //--------------------------------------------------------------------------------------------
     public void start() {
         if(!WorkService.isSeviceStart) return;
-        Registerrr registerrr = new Registerrr(wsClient, this);
-        registerrr.subscribe();
-        registerrr.send();
+        Registration registration = new Registration(wsClient, this);
+        registration.subscribe();
+        registration.send();
     }
 
     @Override

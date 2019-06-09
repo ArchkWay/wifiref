@@ -66,8 +66,8 @@ public class WorkService extends Service {
     public void onDestroy() {
         if(AllInterface.iswClientConnect != null)
             AllInterface.iswClientConnect.shutdown();
-        if(AllInterface.iScheduleMeasumerent !=null)
-            AllInterface.iScheduleMeasumerent.stopSchedule();
+        if(AllInterface.iScheduleMeasurement !=null)
+            AllInterface.iScheduleMeasurement.stopSchedule();
         AllInterface.iLog.addToLog(new LogItem("WorkService", "onDestroy() Завершение работы сервиса",null));
         isSeviceStart = false;
         super.onDestroy();

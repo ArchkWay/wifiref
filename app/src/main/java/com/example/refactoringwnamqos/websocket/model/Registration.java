@@ -24,7 +24,7 @@ import ua.naiksoftware.stomp.dto.StompCommand;
 import ua.naiksoftware.stomp.dto.StompHeader;
 import ua.naiksoftware.stomp.dto.StompMessage;
 
-public class Registerrr {
+public class Registration {
 
     public static final String TAG = "WSClient";
     private WSClient wsClient;
@@ -35,7 +35,7 @@ public class Registerrr {
     private TimerTask timerTaskWDT;
     private int countWDT=0;
 
-    public Registerrr(WSClient wsClient, IRegCallBack iRegCallBack){
+    public Registration(WSClient wsClient, IRegCallBack iRegCallBack){
         this.wsClient = wsClient;
         this.iRegCallBack = iRegCallBack;
     }
@@ -97,7 +97,7 @@ public class Registerrr {
 
         @Override
         public void run() {
-            AllInterface.iLog.addToLog(new LogItem("Registerrr -> MyTimerTask", "run()", null));
+            AllInterface.iLog.addToLog(new LogItem("Registration -> MyTimerTask", "run()", null));
             if(countWDT==3){
                 timerWDT.cancel();
             }else{

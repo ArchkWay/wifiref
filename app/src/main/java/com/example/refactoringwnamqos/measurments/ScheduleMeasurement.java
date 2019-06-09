@@ -3,15 +3,13 @@ package com.example.refactoringwnamqos.measurments;
 import com.example.refactoringwnamqos.intefaces.AllInterface;
 import com.example.refactoringwnamqos.businessLogic.JobToMerge;
 import com.example.refactoringwnamqos.enteties.LogItem;
-import com.example.refactoringwnamqos.intefaces.IScheduleMeasumerent;
-import com.example.refactoringwnamqos.measurments.MeanObject;
-import com.example.refactoringwnamqos.measurments.Measurement;
+import com.example.refactoringwnamqos.intefaces.IScheduleMeasurement;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class ScheduleMeasurement implements IScheduleMeasumerent {
+public class ScheduleMeasurement implements IScheduleMeasurement {
 
     Timer timerSchedul;
     TimerTask timerTaskSchedule;
@@ -19,7 +17,7 @@ public class ScheduleMeasurement implements IScheduleMeasumerent {
     Measurement measurement;
 
     public ScheduleMeasurement(){
-        AllInterface.iScheduleMeasumerent = this;
+        AllInterface.iScheduleMeasurement = this;
     }
 
     public void start(JobToMerge job){

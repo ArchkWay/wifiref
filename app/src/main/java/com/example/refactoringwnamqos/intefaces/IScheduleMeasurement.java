@@ -1,5 +1,5 @@
 package com.example.refactoringwnamqos.intefaces;
 
-public interface IScheduleMeasumerent {
+public interface IScheduleMeasurement {
     void stopSchedule();
 }

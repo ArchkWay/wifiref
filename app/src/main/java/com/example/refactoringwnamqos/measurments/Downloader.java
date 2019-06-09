@@ -37,7 +37,7 @@ public class Downloader {
     }
 
     private boolean hasPermissions() {
-        int res=0;
+        int res;
         String[] permissions = new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
         for(String perm : permissions){
@@ -84,7 +84,7 @@ public class Downloader {
 
 
         Uri uri = Uri.parse(url);
-
+        hasPermissions();
         if (hasPermissions()) {
 
             DownloadManager.Request request = new DownloadManager.Request(uri);
