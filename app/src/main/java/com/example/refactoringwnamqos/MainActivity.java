@@ -1,12 +1,18 @@
 package com.example.refactoringwnamqos;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.os.Build;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
@@ -16,6 +22,7 @@ import com.example.refactoringwnamqos.intefaces.AllInterface;
 import com.example.refactoringwnamqos.intefaces.IMainActivity;
 import com.example.refactoringwnamqos.logs.LogAdapter;
 import com.example.refactoringwnamqos.logs.WorkWithLog;
+import com.example.refactoringwnamqos.services.GeoLocationListener;
 import com.example.refactoringwnamqos.services.WorkService;
 
 import java.io.BufferedReader;
@@ -35,7 +42,9 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
     WorkWithLog workWithLog;
     private static final String TAG = "MainActivity";
     Button button;
-
+    Location location;
+    double latitude;
+    double longitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,18 +68,29 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
             button.setText("Запустить работу");
         }
         button = findViewById(R.id.btnDoWork);
+        isStoragePermissionGranted();
+        GeoLocationListener geoLocationListener = new GeoLocationListener();
+        geoLocationListener.init();
+        location = geoLocationListener.getUserLocation();
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
+        Log.d("__geo", "lat: " + latitude + "long: " +longitude);
+
         button.setOnClickListener(v -> startService());
         final Handler handler = new Handler();
         handler.postDelayed(() -> startService(), 13000);
     }
+
+
 
     public void startService() {
         if(WorkService.isSeviceStart) {
             button.setText("Запустить работу");
             WorkService.isSeviceStart = false;
             getApplication().stopService(new Intent(getApplicationContext(), WorkService.class));
-            if(AllInterface.iScheduleMeasurement != null) AllInterface.iScheduleMeasurement.stopSchedule();
-
+            if(AllInterface.iScheduleMeasurement != null) {
+                AllInterface.iScheduleMeasurement.stopSchedule();
+            }
         }
         else {
             button.setText("Завершить работу");
@@ -124,6 +144,24 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+    public  boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Log.v(TAG,"Permission is granted");
+                return true;
+            } else {
+
+                Log.v(TAG,"Permission is revoked");
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                return false;
+            }
+        }
+        else { //permission is automatically granted on sdk<23 upon installation
+            Log.v(TAG,"Permission is granted");
+            return true;
         }
     }
 

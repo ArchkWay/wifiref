@@ -53,6 +53,7 @@ public class ScheduleMeasurement implements IScheduleMeasurement {
         public void run() {
             clearMeasurementResuts();
             measurement = new Measurement(job);
+//            measurement.preparation();
             AllInterface.iLog.addToLog(new LogItem("ScheduleMeasurement->MyTimerTask","run()", null));
         }
     }

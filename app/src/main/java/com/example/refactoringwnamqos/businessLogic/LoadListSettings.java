@@ -36,7 +36,7 @@ public class LoadListSettings implements IWSClient, ILoadTaskCompleted {
         startWifi();
         timer = new Timer();
         timerTask = new LoadListSettings.MyTimerTask();
-        timer.schedule(timerTask, 1000*secondsWait);
+        timer.schedule(timerTask, 1000 * secondsWait);
 
         AllInterface.iLog.addToLog(new LogItem("Запуск системы", "LoadListSettings->start="+secondsWait, null));
     }
@@ -85,7 +85,7 @@ public class LoadListSettings implements IWSClient, ILoadTaskCompleted {
             formationMeasurement = new FormationMeasurement();
             regOnServise = new RegOnServise(wsClient, this);
             regOnServise.start();
-        }else{
+        }else {
             //connection was failed
             AllInterface.iLog.addToLog(new LogItem("Запуск системы", "LoadListSettings->iwsClientCallBack. Connection was failed", null));
             if(conTimer == null) {

@@ -33,7 +33,7 @@ public class Registration {
 
     private Timer timerWDT;
     private TimerTask timerTaskWDT;
-    private int countWDT=0;
+    private int countWDT = 0;
 
     public Registration(WSClient wsClient, IRegCallBack iRegCallBack){
         this.wsClient = wsClient;

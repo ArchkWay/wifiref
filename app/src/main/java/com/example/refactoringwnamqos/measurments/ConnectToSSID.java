@@ -59,19 +59,22 @@ public class ConnectToSSID {
         public void onReceive(Context context, Intent intent) {
             WifiInfo wifiInfo = wifiManager.getConnectionInfo();
             AllInterface.iLog.addToLog(new LogItem("ConnectToSSID->wifiReceiverCon.",
-                    "RX  SUPPLICANT_STATE_CHANGED_ACTION. WifiReceiverCon "+ wifiInfo.toString()+" "
-                            +"WifiReceiverCon "+ toSsid + " " +wifiInfo.getSSID().toString(), null));
+                    "RX  SUPPLICANT_STATE_CHANGED_ACTION. WifiReceiverCon " + wifiInfo.toString() + " "
+                            + "WifiReceiverCon " + toSsid + " " + wifiInfo.getSSID(), null));
 
-            if (wifiInfo.getSupplicantState().toString().equals("COMPLETED")){
+            if (!wifiInfo.getSupplicantState().toString().equals("COMPLETED")){
                 if(wifiInfo.getSSID().equals("\""+toSsid+"\"")) {
-                    context.unregisterReceiver(this);
+                    try {
+                        context.unregisterReceiver(this);
+                        AllInterface.iLog.addToLog(new LogItem("ConnectToSSID->wifiReceiverCon.","RX SUPPLICANT_STATE_CHANGED_ACTION -> COMPLETED", null));
+                        timerWDT.cancel();
+                        timerWDT = null;
+                        timerTaskWDT = null;
+                        iWifiConnectCallBack.wifiConnectCallBack(true);
+                    }
+                    catch (Exception e){}
 
-                    AllInterface.iLog.addToLog(new LogItem("ConnectToSSID->wifiReceiverCon.","RX SUPPLICANT_STATE_CHANGED_ACTION -> COMPLETED", null));
-                    timerWDT.cancel();
-                    timerWDT = null;
-                    timerTaskWDT = null;
 
-                    iWifiConnectCallBack.wifiConnectCallBack(true);
                 }
             }
         }

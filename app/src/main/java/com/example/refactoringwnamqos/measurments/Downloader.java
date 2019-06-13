@@ -80,7 +80,7 @@ public class Downloader {
                     }
                 }
             }
-        },filter);
+        }, filter);
 
 
         Uri uri = Uri.parse(url);

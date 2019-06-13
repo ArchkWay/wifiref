@@ -44,7 +44,9 @@ public class RegOnServise implements IRegCallBack, IAllCallback, IGetTaskCallBac
 
     //--------------------------------------------------------------------------------------------
     public void start() {
-        if(!WorkService.isSeviceStart) return;
+//        if(!WorkService.isSeviceStart) {
+//            return;
+//        }
         Registration registration = new Registration(wsClient, this);
         registration.subscribe();
         registration.send();
@@ -52,8 +54,8 @@ public class RegOnServise implements IRegCallBack, IAllCallback, IGetTaskCallBac
 
     @Override
     public void regCallBack(int state) {
-        if(!WorkService.isSeviceStart) return;
-        if(state != 0) return;
+        if(!WorkService.isSeviceStart) {return;}
+        if(state != 0){ return;}
         getAll = new GetAll(wsClient, this);
         getAll.subscribe();
         getAll.send();
@@ -62,8 +64,8 @@ public class RegOnServise implements IRegCallBack, IAllCallback, IGetTaskCallBac
     //--------------------------------------------------------------------------------------------
     @Override
     public void allCallBack(int state, FGetAll fGetAll) {
-        if(state != 0) return;
-        if(!WorkService.isSeviceStart) return;
+        if(state != 0) {return;}
+        if(!WorkService.isSeviceStart) {return;}
         countId = fGetAll.getData().size();
         if(countId == 0) return;
         listSchedules = fGetAll.getData();
@@ -71,7 +73,7 @@ public class RegOnServise implements IRegCallBack, IAllCallback, IGetTaskCallBac
     }
 
     private void loadTask(List<FGetAllData> listTasks) {
-        if(!WorkService.isSeviceStart) return;
+        if(!WorkService.isSeviceStart) {return;}
         getTask = new GetTask(wsClient, this);
         getTask.subscribe();
         currId=0;
@@ -82,10 +84,10 @@ public class RegOnServise implements IRegCallBack, IAllCallback, IGetTaskCallBac
     //----------------
     @Override
     public void taskCallBack(int state, FGetTask fGetTask) {
-        if(!WorkService.isSeviceStart) return;
+        if(!WorkService.isSeviceStart) {return;}
         currId++;
         listTasks.add(fGetTask.getData());
-        if(currId<countId) {
+        if(currId < countId) {
             getTask.send(listSchedules.get(currId).getTask());
         }else{
             JobToMerge job = new JobToMerge(listSchedules, listTasks, null);
@@ -95,7 +97,7 @@ public class RegOnServise implements IRegCallBack, IAllCallback, IGetTaskCallBac
     }
 
     private void tranportMethods(WSClient wsClient){
-        if(!WorkService.isSeviceStart) return;
+        if(!WorkService.isSeviceStart) {return;}
         refresh = new Refresh(wsClient);
         refreshAction = new RefreshAction();
         refresh.subscribe(refreshAction);

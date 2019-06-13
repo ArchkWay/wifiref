@@ -1,9 +1,5 @@
 package com.example.refactoringwnamqos.measurments;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.example.refactoringwnamqos.intefaces.AllInterface;
@@ -26,6 +22,7 @@ import com.example.refactoringwnamqos.wifi.WifiItem;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
 
 
 public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWaitTime, IWebAuthorCallBack, IReconnectStomp, IDownloader {
@@ -62,7 +59,7 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
 
         RegOnServise.isConnectinAfterMeasumerent = true;
 
-        for(int q=0; q<mJob.getListTasks().size(); q++){
+        for(int q = 0; q < mJob.getListTasks().size(); q++){
            mTask = mJob.getListTasks().get(q);
            mMeanObject = mJob.getMeanObjectList().get(q);
         }
@@ -198,9 +195,9 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
     public void webAuthorCallback(int state){
         Log.d(TAG, "WEBAUTH - получен коллбек "+state);
         TCOMMAN_X_ID tcommanXId = mMeanObject.getResults().get(mCurrentConutCommands);
-        if(state==0)tcommanXId.setOutput("OK");
-        if(state==1)tcommanXId.setOutput("TIMEOUT");
-        if(state==2)tcommanXId.setOutput("ERROR");
+        if(state == 0)tcommanXId.setOutput("OK");
+        if(state == 1)tcommanXId.setOutput("TIMEOUT");
+        if(state == 2)tcommanXId.setOutput("ERROR");
         tcommanXId.setEnd(getTime());
         mCurrentConutCommands++;
         start();
@@ -262,7 +259,7 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
 
     @Override
     public void wifiScanCallBack(List<WifiItem> wifiItems, int code) {
-        Log.d(TAG, "SCAN_WIFI - получен коллбек, код - "+code);
+        Log.d(TAG, "SCAN_WIFI - получен коллбек, код - " + code);
         TCOMMAN_X_ID tcommanXId = mMeanObject.getResults().get(mCurrentConutCommands);
         tcommanXId.setEnd(getTime());
         if(code == 1){
@@ -290,10 +287,10 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
     public void wifiConnectCallBack(boolean state) {
         Log.d(TAG, "ASSOC_SSID - получен коллбек");
         TCOMMAN_X_ID tcommanXId = mMeanObject.getResults().get(mCurrentConutCommands);
-        connectWifi = false;
-        if(state == true){
+        if(state){
             tcommanXId.setOutput("OK");
-            connectWifi = true;
+            setConnectWifi(true);
+            AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands,"Скачивание файла", null));
         }
         else tcommanXId.setOutput("TIMEOUT");
         tcommanXId.setEnd(getTime());
@@ -311,7 +308,7 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
     @Override
     public void success() {
         AllInterface.iSendMeasurement.sendMeanObject(mMeanObject);
-        RegOnServise.isConnectinAfterMeasumerent=false;
+        RegOnServise.isConnectinAfterMeasumerent = false;
     }
 
     //----------------------------------------------------
@@ -337,7 +334,7 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
 
     @Override
     public void downdoladEvent(int state) {
-        Log.d(TAG, "GET_FILE - получен коллбек. state = "+state);
+        Log.d(TAG, "GET_FILE - получен коллбек. state = " + state);
         TCOMMAN_X_ID tcommanXId = mMeanObject.getResults().get(mCurrentConutCommands);
         if(state == 0) tcommanXId.setOutput("OK");
         if(state == 1) tcommanXId.setOutput("ERROR");
