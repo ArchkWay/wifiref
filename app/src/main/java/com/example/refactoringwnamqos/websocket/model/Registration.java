@@ -48,7 +48,6 @@ public class Registration {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(topicMessage -> {
-
                     timerWDT.cancel();
 
                     Log.d(TAG, "Received register " + topicMessage.getPayload());

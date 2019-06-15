@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
 
     WorkWithLog workWithLog;
     private static final String TAG = "MainActivity";
-    Button button;
+//    Button button;
     Location location;
     double latitude;
     double longitude;
@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         InfoAboutMe.context = getApplicationContext();
-        button = findViewById(R.id.btnDoWork);
+//        button = findViewById(R.id.btnDoWork);
         writingLogs();
         recyclerView = findViewById(R.id.recycler_view);
         initRecyclerView();
@@ -62,24 +62,23 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        if(WorkService.isSeviceStart) {
-            button.setText("Завершить работу");
-        }else{
-            button.setText("Запустить работу");
-        }
-        button = findViewById(R.id.btnDoWork);
+//        if(WorkService.isSeviceStart) {
+//            button.setText("Завершить работу");
+//        }else{
+//            button.setText("Запустить работу");
+//        }
+//        button = findViewById(R.id.btnDoWork);
         isStoragePermissionGranted();
 
-        button.setOnClickListener(v -> startService());
-        final Handler handler = new Handler();
-        handler.postDelayed(() -> startService(), 13000);
-    }
+//        button.setOnClickListener(v -> startService());
+                startService();
+    };
 
 
 
     public void startService() {
         if(WorkService.isSeviceStart) {
-            button.setText("Запустить работу");
+//            button.setText("Запустить работу");
             WorkService.isSeviceStart = false;
             getApplication().stopService(new Intent(getApplicationContext(), WorkService.class));
             if(AllInterface.iScheduleMeasurement != null) {
@@ -87,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
             }
         }
         else {
-            button.setText("Завершить работу");
+//            button.setText("Завершить работу");
             WorkService.isSeviceStart = true;
             Intent serviceIntent = new Intent(this, WorkService.class);
             ContextCompat.startForegroundService(this, serviceIntent);

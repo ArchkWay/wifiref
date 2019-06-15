@@ -61,46 +61,35 @@ public class WSClient implements ISWClientConnect {
         List <StompHeader> headers = new ArrayList <>();
         headers.add(new StompHeader("login", InfoAboutMe.UUID));
         headers.add(new StompHeader("sid", InfoAboutMe.UUID));
-
         mStompClient.withClientHeartbeat(5000).withServerHeartbeat(5000);
-
         resetSubscriptions();
-
+        mStompClient.connect(headers);
         Disposable dispLifecycle = mStompClient.lifecycle().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(lifecycleEvent -> {
             switch (lifecycleEvent.getType()) {
                 case OPENED:
-                    date = new Date();
                     AllInterface.iLog.addToLog(new LogItem("WSClient", "connectStomp() Подключение удалось", String.valueOf(date)));
                     if (iwsClient != null) {
                         iwsClient.iwsClientCallBack(mStompClient, 0);
                     }
                     break;
-                case ERROR:
-                    //InfoAboutMe.stompClient = null;
-                    date = new Date();
+                case ERROR://InfoAboutMe.stompClient = null;
                     AllInterface.iLog.addToLog(new LogItem("WSClient", "connectStomp() Ошибка подключения", String.valueOf(date)));
-//                            if(iwsClient != null)
-//                                iwsClient.iwsClientCallBack(null, 1);
+//                            if(iwsClient != null)//                                iwsClient.iwsClientCallBack(null, 1);
                     break;
                 case CLOSED:
                     InfoAboutMe.stompClient = null;
-                    date = new Date();
                     AllInterface.iLog.addToLog(new LogItem("WSClient", "connectStomp() Подключение закрыто", String.valueOf(date)));
                     resetSubscriptions();
                     if (iwsClient != null) iwsClient.iwsClientCallBack(null, 2);
                     break;
                 case FAILED_SERVER_HEARTBEAT:
-                    date = new Date();
                     //InfoAboutMe.stompClient = null;
                     AllInterface.iLog.addToLog(new LogItem("WSClient", "connectStomp() Ошибка пинга", String.valueOf(date)));
-//                            if(iwsClient != null)
-//                                iwsClient.iwsClientCallBack(null, 3);
+//                            if(iwsClient != null)//                                iwsClient.iwsClientCallBack(null, 3);
                     break;
             }
         });
-
         compositeDisposable.add(dispLifecycle);
-        mStompClient.connect(headers);
     }
 
     //---------------------------------------------------------------------------------

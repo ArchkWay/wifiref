@@ -55,12 +55,10 @@ public class GetTask {
     public void send(String taskId) {
         TGetTask tGetTask = new TGetTask(taskId);
         String gsonStr = mGson.toJson(tGetTask);
-
         List<StompHeader> headers = new ArrayList<>();
         String sid = String.valueOf(System.currentTimeMillis());
         headers.add(new StompHeader("sid", sid));
         headers.add(new StompHeader(StompHeader.DESTINATION, "/app/task/get"));
-
         StompMessage stompMessage = new StompMessage(StompCommand.SEND, headers, gsonStr);
 
         wsClient.compositeDisposable.add(wsClient.mStompClient.send(stompMessage)

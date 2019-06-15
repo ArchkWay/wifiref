@@ -84,12 +84,12 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
     }
 
     private void start(){
-
+        Date date = new Date();
         if(mCurrentConutCommands < mCountCommands){
             String type = findMetodMeasurement(mCommands.get(mCurrentConutCommands));
             switch (type){
                 case "SCAN_WIFI":
-                    Date date = new Date();
+
                     AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands,"Сканирование сетей",  String.valueOf(date)));
                     scanWifi2();
                     break;
@@ -131,7 +131,7 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
             }
         } else {
             mMeanObject.setEnd(getTime());
-            Date date = new Date();
+            date = new Date();
             AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands,"Измерение завершено",  String.valueOf(date)));
             AllInterface.iWifi.disableWifi();
 

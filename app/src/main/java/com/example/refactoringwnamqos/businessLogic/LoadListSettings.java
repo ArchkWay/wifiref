@@ -31,14 +31,15 @@ public class LoadListSettings implements IWSClient, ILoadTaskCompleted {
     ScheduleMeasurement scheduleMeasurement;
 
     public static boolean isLoad = false;
-
+    Date date = new Date();
     //-------------------------------------------------------
     public void start(int secondsWait){
-        startWifi();
+        startWifi(secondsWait);
+    }
+    private void  goToSchedule(int secondsWait){
         timer = new Timer();
         timerTask = new LoadListSettings.MyTimerTask();
         timer.schedule(timerTask, 1000 * secondsWait);
-Date date = new Date();
         AllInterface.iLog.addToLog(new LogItem("Запуск системы", "LoadListSettings->start=" + secondsWait,  String.valueOf(date)));
     }
 
@@ -47,7 +48,6 @@ Date date = new Date();
         public void run() {
             if(AllInterface.iswClientConnect != null) AllInterface.iswClientConnect.shutdown();
             if(!WorkService.isSeviceStart) return;
-            Date date = new Date();
             AllInterface.iLog.addToLog(new LogItem("Запуск системы", "LoadListSettings->MyTimerTask",  String.valueOf(date)));
             startWork();
         }
@@ -60,8 +60,7 @@ Date date = new Date();
      */
     @Override
     public void jobCallback(JobToMerge job) {
-
-        if(RegOnServise.isConnectinAfterMeasumerent == false) {
+        if(!RegOnServise.isConnectinAfterMeasumerent) {
             formationMeasurement.create(job);
             scheduleMeasurement = new ScheduleMeasurement();
             scheduleMeasurement.start(job);
@@ -75,10 +74,8 @@ Date date = new Date();
     @Override
     public void iwsClientCallBack(StompClient mStompClient, int code) {
         if(mStompClient != null){
-            Date date = new Date();
             AllInterface.iLog.addToLog(new LogItem("Запуск системы", "LoadListSettings->iwsClientCallBack. Connection was succeed",  String.valueOf(date)));
             //connection was succeed
-
             if(conTimer != null){
                 conTimer.cancel();
                 conTimer=null;
@@ -90,7 +87,6 @@ Date date = new Date();
             regOnServise.start();
         }else {
             //connection was failed
-            Date date = new Date();
             AllInterface.iLog.addToLog(new LogItem("Запуск системы", "LoadListSettings->iwsClientCallBack. Connection was failed",  String.valueOf(date)));
             if(conTimer == null) {
                 wsClient.shutdown();
@@ -99,7 +95,6 @@ Date date = new Date();
                     conTimerTask = new LoadListSettings.ConTimerTask();
                     conTimer.schedule(timerTask, 600_000);  //every 10 minutes
                 }
-                date = new Date();
                 AllInterface.iLog.addToLog(new LogItem("Запуск системы", "LoadListSettings->iwsClientCallBack. Try after 10 minutes",  String.valueOf(date)));
             }
         }
@@ -109,7 +104,6 @@ Date date = new Date();
         @Override
         public void run() {
             if(WorkService.isSeviceStart == false) return;
-            Date date = new Date();
             AllInterface.iLog.addToLog(new LogItem("Запуск системы", "LoadListSettings->ConTimerTask. Try connection",  String.valueOf(date)));
             conTimer.cancel();
             conTimer = null;
@@ -120,7 +114,6 @@ Date date = new Date();
     //--------------------------------------------------------
 
     private void startWork(){
-        Date date = new Date();
         AllInterface.iLog.addToLog(new LogItem("Запуск системы", "LoadListSettings -> startWork",  String.valueOf(date)));
         startPhone();
         startWSClient();
@@ -131,12 +124,13 @@ Date date = new Date();
         mMyInfo.init();
     }
 
-    private void startWifi() {
+    private void startWifi(int sec) {
         wifi = new Wifi(InfoAboutMe.context);
         wifi.init();
         wifi.enableWifi();
         wifi.removeAllNetwork();
         wifi.disableWifi();
+        goToSchedule(sec);
     }
 
     private void startWSClient() {
