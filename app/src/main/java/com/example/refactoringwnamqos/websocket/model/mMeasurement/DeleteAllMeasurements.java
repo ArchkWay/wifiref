@@ -12,6 +12,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -32,16 +33,18 @@ public class DeleteAllMeasurements {
 
     public void subscribe(){
         // Receive greetings
+        Date date = new Date();
         Disposable dispTopic = wsClient.mStompClient.topic("/user/queue/measurement/deleteall")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(topicMessage -> {
                     Log.d(TAG, "Received " + topicMessage.getPayload());
-                    AllInterface.iLog.addToLog(new LogItem("Подписка удалить все измерения","Принято "+topicMessage.getPayload(),null));
+
+                    AllInterface.iLog.addToLog(new LogItem("Подписка удалить все измерения","Принято "+topicMessage.getPayload(), String.valueOf(date)));
                     FDeleteAllMeasurements fDeleteAllMeasurements = mGson.fromJson(topicMessage.getPayload(), FDeleteAllMeasurements.class);
 
                 }, throwable -> {
-                    AllInterface.iLog.addToLog(new LogItem("Подписка удалить все измерения","Ошибка подписки",null));
+                    AllInterface.iLog.addToLog(new LogItem("Подписка удалить все измерения","Ошибка подписки", String.valueOf(date)));
                     Log.e(TAG, "Error on subscribe topic", throwable);
 
                 });
@@ -49,6 +52,7 @@ public class DeleteAllMeasurements {
     }
 
     public void send() {
+        Date date = new Date();
 
         long uptime = (System.currentTimeMillis() - InfoAboutMe.startTime)/1000;
 
@@ -67,10 +71,10 @@ public class DeleteAllMeasurements {
                 .compose(wsClient.applySchedulers())
                 .subscribe(() -> {
                     Log.d(TAG, "STOMP echo send successfully");
-                    AllInterface.iLog.addToLog(new LogItem("Отправка удалить все измерения","Данные отпрвлены удачно",null));
+                    AllInterface.iLog.addToLog(new LogItem("Отправка удалить все измерения","Данные отпрвлены удачно", String.valueOf(date)));
                 }, throwable -> {
                     Log.d(TAG, "Error send STOMP echo", throwable);
-                    AllInterface.iLog.addToLog(new LogItem("Отправка удалить все измерения","Ошибка отправки",null));
+                    AllInterface.iLog.addToLog(new LogItem("Отправка удалить все измерения","Ошибка отправки", String.valueOf(date)));
                     //toast(throwable.getMessage());
                 }));
     }

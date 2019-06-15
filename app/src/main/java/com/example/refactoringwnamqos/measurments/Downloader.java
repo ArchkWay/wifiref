@@ -18,6 +18,7 @@ import com.example.refactoringwnamqos.intefaces.IDownloader;
 import com.example.refactoringwnamqos.wifi.WF_permissions;
 
 import java.io.File;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -70,11 +71,13 @@ public class Downloader {
                     if(getDownLoadStatus() == DownloadManager.STATUS_SUCCESSFUL){
                         if (timerWDT != null) timerWDT.cancel();
                         iDownloader.downdoladEvent(0);
-                        AllInterface.iLog.addToLog(new LogItem("Downloader","Удачно", null));
+                        Date date = new Date();
+                        AllInterface.iLog.addToLog(new LogItem("Downloader","Удачно",  String.valueOf(date)));
                         //Toast.makeText(InfoAboutMe.context, "Download complete", Toast.LENGTH_SHORT).show();
                     } else{
                         //Toast.makeText(InfoAboutMe.context, "Download not complete", Toast.LENGTH_SHORT).show();
-                        AllInterface.iLog.addToLog(new LogItem("Downloader","Не получилось", null));
+                        Date date = new Date();
+                        AllInterface.iLog.addToLog(new LogItem("Downloader","Не получилось",  String.valueOf(date)));
                         if(timerWDT != null) timerWDT.cancel();
                         iDownloader.downdoladEvent(1);
                     }
@@ -96,7 +99,8 @@ public class Downloader {
             Intent intent = new Intent(InfoAboutMe.context, WF_permissions.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             InfoAboutMe.context.startActivity(intent);
-            AllInterface.iLog.addToLog(new LogItem("Downloader","Нет пермишина для работы с памятью", null));
+            Date date = new Date();
+            AllInterface.iLog.addToLog(new LogItem("Downloader","Нет пермишина для работы с памятью",  String.valueOf(date)));
         }
 
 
@@ -145,7 +149,8 @@ public class Downloader {
         public void run() {
             cancelDowload();
             iDownloader.downdoladEvent(2);
-            AllInterface.iLog.addToLog(new LogItem("Downloader файла->WDTimer","run()", null));
+            Date date = new Date();
+            AllInterface.iLog.addToLog(new LogItem("Downloader файла->WDTimer","run()",  String.valueOf(date)));
         }
     }
 

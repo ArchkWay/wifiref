@@ -16,6 +16,7 @@ import com.example.refactoringwnamqos.intefaces.IWifiScanCallBack;
 import com.example.refactoringwnamqos.wifi.WifiItem;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -39,11 +40,12 @@ public class WifiScan{
         arrayList.clear();
         InfoAboutMe.context.registerReceiver(wifiReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
         wifiManager.startScan();
-        AllInterface.iLog.addToLog(new LogItem("WifiScan","scanWifi()", null));
+        Date date = new Date();
+        AllInterface.iLog.addToLog(new LogItem("WifiScan","scanWifi()", String.valueOf(date)));
 
         timerWDT = new Timer();
         timerTaskWDT = new WifiScan.MyTimerTaskWDT();
-        timerWDT.schedule(timerTaskWDT, 1000*timeout);
+        timerWDT.schedule(timerTaskWDT, 1000 * timeout);
     }
 
     //-------------------------------------------------------------------------------------
@@ -68,7 +70,8 @@ public class WifiScan{
                 String data = wifiItems.get(t).getString();
                 wifiNetwork.append(data);
                 //String data = results.get(t).toString();
-                AllInterface.iLog.addToLog(new LogItem("WifiScan " + String.valueOf(t), data, null));
+                Date date = new Date();
+                AllInterface.iLog.addToLog(new LogItem("WifiScan " + String.valueOf(t), data, String.valueOf(date)));
             }
 
 
@@ -86,7 +89,8 @@ public class WifiScan{
     class MyTimerTaskWDT extends TimerTask {
         @Override
         public void run() {
-            AllInterface.iLog.addToLog(new LogItem("WifiScan -> MyTimerTaskWDT", "run()", null));
+            Date date = new Date();
+            AllInterface.iLog.addToLog(new LogItem("WifiScan -> MyTimerTaskWDT", "run()", String.valueOf(date)));
             InfoAboutMe.context.unregisterReceiver(wifiReceiver);
             iWifiScanCallBack.wifiScanCallBack(null, 1);
         }

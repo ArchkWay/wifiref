@@ -5,6 +5,7 @@ import com.example.refactoringwnamqos.businessLogic.JobToMerge;
 import com.example.refactoringwnamqos.enteties.LogItem;
 import com.example.refactoringwnamqos.intefaces.IScheduleMeasurement;
 
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -34,8 +35,8 @@ public class ScheduleMeasurement implements IScheduleMeasurement {
         timerSchedul = new Timer();
         timerTaskSchedule = new MyTimerTask();
         timerSchedul.schedule(timerTaskSchedule, time, time);
-
-        AllInterface.iLog.addToLog(new LogItem("ScheduleMeasurement","start()", null));
+        Date date = new Date();
+        AllInterface.iLog.addToLog(new LogItem("ScheduleMeasurement","start()", String.valueOf(date)));
     }
 
     @Override
@@ -45,7 +46,8 @@ public class ScheduleMeasurement implements IScheduleMeasurement {
             timerSchedul = null;
             timerTaskSchedule=null;
         }
-        AllInterface.iLog.addToLog(new LogItem("ScheduleMeasurement","stopSchedule()", null));
+        Date date = new Date();
+        AllInterface.iLog.addToLog(new LogItem("ScheduleMeasurement","stopSchedule()", String.valueOf(date)));
     }
 
     class MyTimerTask extends TimerTask {
@@ -54,7 +56,8 @@ public class ScheduleMeasurement implements IScheduleMeasurement {
             clearMeasurementResuts();
             measurement = new Measurement(job);
 //            measurement.preparation();
-            AllInterface.iLog.addToLog(new LogItem("ScheduleMeasurement->MyTimerTask","run()", null));
+            Date date = new Date();
+            AllInterface.iLog.addToLog(new LogItem("ScheduleMeasurement->MyTimerTask","run()", String.valueOf(date)));
         }
     }
 
@@ -66,7 +69,8 @@ public class ScheduleMeasurement implements IScheduleMeasurement {
             meanObject.getResults().get(q).setBegin(null);
             meanObject.getResults().get(q).setOutput(null);
         }
-        AllInterface.iLog.addToLog(new LogItem("ScheduleMeasurement","clearMeasurementResuts()", null));
+        Date date = new Date();
+        AllInterface.iLog.addToLog(new LogItem("ScheduleMeasurement","clearMeasurementResuts()", String.valueOf(date)));
     }
 
 

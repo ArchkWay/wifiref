@@ -8,6 +8,7 @@ import com.example.refactoringwnamqos.measurments.MeanObject;
 import com.example.refactoringwnamqos.enteties.modelJson.jMeasurement.jSendMeasurement.TCOMMAN_X_ID;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -21,15 +22,17 @@ public class FormationMeasurement
         List<MeanObject> meanObjectList;
 
         if(job == null){
+            Date date = new Date();
             AllInterface.iLog.addToLog(new LogItem(
                     "Критическая ошибка", "PlanWork->createMeasurement->job == null",
-                    null));
+                    String.valueOf(date)));
             return;
         }
         if(job.getListScheduls().size() != job.getListTasks().size()){
+            Date date = new Date();
             AllInterface.iLog.addToLog(new LogItem(
                     "Критическая ошибка", "PlanWork->createMeasurement->" +
-                    "job.getListScheduls().size() != job.getListTasks().size()", null));
+                    "job.getListScheduls().size() != job.getListTasks().size()", String.valueOf(date)));
             return;
         }
 
@@ -38,9 +41,10 @@ public class FormationMeasurement
             int pozTask = findTask(job.getListScheduls(), job.getListScheduls().get(t).getTask());
 
             if(pozTask == -1) {
+                Date date = new Date();
                 AllInterface.iLog.addToLog(new LogItem(
                         "Критическая ошибка", "PlanWork->createMeasurement->" +
-                        "Не найден Такс из скедулера", null));
+                        "Не найден Такс из скедулера", String.valueOf(date)));
                 return;
             }
 

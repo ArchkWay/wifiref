@@ -1,5 +1,6 @@
 package com.example.refactoringwnamqos.logs;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +12,9 @@ import android.widget.TextView;
 import com.example.refactoringwnamqos.R;
 import com.example.refactoringwnamqos.enteties.LogItem;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 
@@ -35,12 +39,18 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.MyViewHodler>{
 
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull LogAdapter.MyViewHodler myViewHodler, int i) {
         LogItem logItem = logItems.get(i);
 
         myViewHodler.textCaption.setText(logItem.getmCaption());
-        myViewHodler.textData.setText(logItem.getmInfo()+" в "+logItem.getmDate());
+        @SuppressLint("SimpleDateFormat")
+        SimpleDateFormat formatForDateNow = new SimpleDateFormat("E yyyy.MM.dd 'время' hh:mm:ss");
+        Date parsingDate = new Date(Long.parseLong(logItem.getmDate())*1000);
+        String date = formatForDateNow.format(parsingDate);
+        myViewHodler.textData.setText(logItem.getmInfo() + " в " + date);
+
 
     }
 

@@ -6,10 +6,19 @@ public class LogItem {
 
     @SerializedName("date")
     private String mDate;
+    private String finalDate;
     @SerializedName("caption")
     private String mCaption;
     @SerializedName("info")
     private String mInfo;
+
+    public String getFinalDate() {
+        return finalDate;
+    }
+
+    public void setFinalDate(String finalDate) {
+        this.finalDate = finalDate;
+    }
 
     public LogItem(String caption, String info, String date) {
         mCaption = caption;

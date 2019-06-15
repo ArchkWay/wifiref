@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -39,11 +40,13 @@ public class LoadAllMeasurements {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(topicMessage -> {
                     Log.d(TAG, "Received " + topicMessage.getPayload());
-                    AllInterface.iLog.addToLog(new LogItem("Подписка загрузить все измерения","Принято "+topicMessage.getPayload(),null));
+                    Date date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Подписка загрузить все измерения","Принято "+topicMessage.getPayload(), String.valueOf(date)));
                     FLoadAllMeasurement fLoadAllMeasurement = mGson.fromJson(topicMessage.getPayload(), FLoadAllMeasurement.class);
                     iLoadMeasurCallback.loadMeasurCallBack(fLoadAllMeasurement);
                 }, throwable -> {
-                    AllInterface.iLog.addToLog(new LogItem("Подписка загрузить все измерения","Ошибка подписки",null));
+                    Date date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Подписка загрузить все измерения","Ошибка подписки", String.valueOf(date)));
                     Log.e(TAG, "Error on subscribe topic", throwable);
 
                 });
@@ -69,10 +72,12 @@ public class LoadAllMeasurements {
                 .compose(wsClient.applySchedulers())
                 .subscribe(() -> {
                     Log.d(TAG, "STOMP echo send successfully");
-                    AllInterface.iLog.addToLog(new LogItem("Отправка загрузить все измерения","Данные отпрвлены удачно",null));
+                    Date date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Отправка загрузить все измерения","Данные отпрвлены удачно", String.valueOf(date)));
                 }, throwable -> {
                     Log.d(TAG, "Error send STOMP echo", throwable);
-                    AllInterface.iLog.addToLog(new LogItem("Отправка загрузить все измерения","Ошибка отправки",null));
+                    Date date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Отправка загрузить все измерения","Ошибка отправки", String.valueOf(date)));
                     //toast(throwable.getMessage());
                 }));
     }

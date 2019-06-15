@@ -12,6 +12,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -38,11 +39,13 @@ public class RefreshMeasurement {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(topicMessage -> {
                     Log.d(TAG, "Received " + topicMessage.getPayload());
-                    AllInterface.iLog.addToLog(new LogItem("Подписка обновить измерение","Принято "+topicMessage.getPayload(),null));
+                    Date date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Подписка обновить измерение","Принято "+topicMessage.getPayload(), String.valueOf(date)));
                     FRefreshMeasurement fRefreshMeasurement = mGson.fromJson(topicMessage.getPayload(), FRefreshMeasurement.class);
 
                 }, throwable -> {
-                    AllInterface.iLog.addToLog(new LogItem("Подписка обновить измерение","Ошибка подписки",null));
+                    Date date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Подписка обновить измерение","Ошибка подписки", String.valueOf(date)));
                     Log.e(TAG, "Error on subscribe topic", throwable);
 
                 });
@@ -68,10 +71,12 @@ public class RefreshMeasurement {
                 .compose(wsClient.applySchedulers())
                 .subscribe(() -> {
                     Log.d(TAG, "STOMP echo send successfully");
-                    AllInterface.iLog.addToLog(new LogItem("Отправка обновить измерение","Данные отпрвлены удачно",null));
+                    Date date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Отправка обновить измерение","Данные отпрвлены удачно", String.valueOf(date)));
                 }, throwable -> {
                     Log.d(TAG, "Error send STOMP echo", throwable);
-                    AllInterface.iLog.addToLog(new LogItem("Отправка обновить измерение","Ошибка отправки",null));
+                    Date date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Отправка обновить измерение","Ошибка отправки", String.valueOf(date)));
                     //toast(throwable.getMessage());
                 }));
     }

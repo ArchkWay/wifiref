@@ -36,7 +36,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements IMainActivity{
 
     private RecyclerView recyclerView;
-    private LogAdapter recyclerViewLog;
+    private LogAdapter adapter;
     private List<LogItem> recLogItems = new ArrayList<>();
 
     WorkWithLog workWithLog;
@@ -57,8 +57,8 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
         initRecyclerView();
         workWithLog = WorkWithLog.getInstance(getApplicationContext());
         recLogItems = AllInterface.iLog.getLogList();
-        recyclerViewLog = new LogAdapter(recLogItems);
-        recyclerView.setAdapter(recyclerViewLog);
+        adapter = new LogAdapter(recLogItems);
+        recyclerView.setAdapter(adapter);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -69,12 +69,6 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
         }
         button = findViewById(R.id.btnDoWork);
         isStoragePermissionGranted();
-        GeoLocationListener geoLocationListener = new GeoLocationListener();
-        geoLocationListener.init();
-        location = geoLocationListener.getUserLocation();
-        latitude = location.getLatitude();
-        longitude = location.getLongitude();
-        Log.d("__geo", "lat: " + latitude + "long: " +longitude);
 
         button.setOnClickListener(v -> startService());
         final Handler handler = new Handler();
@@ -117,13 +111,17 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
     protected void onResume() {
         AllInterface.iMainActivity = this;
         updateRecycler();
+        int count = adapter.getItemCount();
+        recyclerView.smoothScrollToPosition(count);
         super.onResume();
     }
 
 
     @Override
     public void updateRecycler() {
-        runOnUiThread(() -> recyclerViewLog.notifyDataSetChanged());
+        runOnUiThread(() -> adapter.notifyDataSetChanged());
+        int count = adapter.getItemCount();
+        recyclerView.smoothScrollToPosition(count);
     }
 
     public void showToast(String str){

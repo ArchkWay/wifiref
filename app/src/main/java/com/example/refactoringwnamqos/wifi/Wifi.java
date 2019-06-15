@@ -24,6 +24,7 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.UnknownHostException;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 
@@ -86,12 +87,14 @@ public class Wifi implements IWifi {
                 if (res1.length() > 0) {
                     res1.deleteCharAt(res1.length() - 1);
                 }
-                AllInterface.iLog.addToLog(new LogItem("Определён мой MAC",res1.toString(),null));
+                Date date = new Date();
+                AllInterface.iLog.addToLog(new LogItem("Определён мой MAC",res1.toString(),String.valueOf(date)));
                 return res1.toString();
             }
         } catch (Exception ex) {
         }
-        AllInterface.iLog.addToLog(new LogItem("Ошибка определения MAC адреса","",null));
+        Date date = new Date();
+        AllInterface.iLog.addToLog(new LogItem("Ошибка определения MAC адреса","",String.valueOf(date)));
         return "02:00:00:00:00:00";
     }
 

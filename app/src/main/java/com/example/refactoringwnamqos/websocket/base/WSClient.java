@@ -7,6 +7,7 @@ import com.example.refactoringwnamqos.intefaces.ISWClientConnect;
 import com.example.refactoringwnamqos.intefaces.IWSClient;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import io.reactivex.CompletableTransformer;
@@ -21,7 +22,7 @@ import ua.naiksoftware.stomp.dto.StompHeader;
 public class WSClient implements ISWClientConnect {
 
     private static final int SCHEDULER_INTERVAL = 1;
-
+    Date date;
     //private static final String TAG = "WSClient";
 
     public StompClient mStompClient;
@@ -45,7 +46,8 @@ public class WSClient implements ISWClientConnect {
     }
 
     private void resetSubscriptions() {
-        AllInterface.iLog.addToLog(new LogItem("WSClient","Сброс подписок",null));
+        Date date = new Date();
+        AllInterface.iLog.addToLog(new LogItem("WSClient", "Сброс подписок", String.valueOf(date)));
         if (compositeDisposable != null) {
             compositeDisposable.dispose();
         }
@@ -54,9 +56,9 @@ public class WSClient implements ISWClientConnect {
 
     @Override
     public void connectStomp() {
-
-        AllInterface.iLog.addToLog(new LogItem("WSClient","connectStomp() Попытка подключения к серверу",null));
-        List<StompHeader> headers = new ArrayList<>();
+        date = new Date();
+        AllInterface.iLog.addToLog(new LogItem("WSClient", "connectStomp() Попытка подключения к серверу", String.valueOf(date)));
+        List <StompHeader> headers = new ArrayList <>();
         headers.add(new StompHeader("login", InfoAboutMe.UUID));
         headers.add(new StompHeader("sid", InfoAboutMe.UUID));
 
@@ -64,38 +66,38 @@ public class WSClient implements ISWClientConnect {
 
         resetSubscriptions();
 
-        Disposable dispLifecycle = mStompClient.lifecycle()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(lifecycleEvent -> {
-                    switch (lifecycleEvent.getType()) {
-                        case OPENED:
-                            AllInterface.iLog.addToLog(new LogItem("WSClient","connectStomp() Подключение удалось",null));
-                            if(iwsClient != null) {
-                                iwsClient.iwsClientCallBack(mStompClient, 0);
-                            }
-                            break;
-                        case ERROR:
-                            //InfoAboutMe.stompClient = null;
-                            AllInterface.iLog.addToLog(new LogItem("WSClient","connectStomp() Ошибка подключения",null));
+        Disposable dispLifecycle = mStompClient.lifecycle().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(lifecycleEvent -> {
+            switch (lifecycleEvent.getType()) {
+                case OPENED:
+                    date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("WSClient", "connectStomp() Подключение удалось", String.valueOf(date)));
+                    if (iwsClient != null) {
+                        iwsClient.iwsClientCallBack(mStompClient, 0);
+                    }
+                    break;
+                case ERROR:
+                    //InfoAboutMe.stompClient = null;
+                    date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("WSClient", "connectStomp() Ошибка подключения", String.valueOf(date)));
 //                            if(iwsClient != null)
 //                                iwsClient.iwsClientCallBack(null, 1);
-                            break;
-                        case CLOSED:
-                            InfoAboutMe.stompClient = null;
-                            AllInterface.iLog.addToLog(new LogItem("WSClient","connectStomp() Подключение закрыто",null));
-                            resetSubscriptions();
-                            if(iwsClient != null)
-                                iwsClient.iwsClientCallBack(null, 2);
-                            break;
-                        case FAILED_SERVER_HEARTBEAT:
-                            //InfoAboutMe.stompClient = null;
-                            AllInterface.iLog.addToLog(new LogItem("WSClient","connectStomp() Ошибка пинга",null));
+                    break;
+                case CLOSED:
+                    InfoAboutMe.stompClient = null;
+                    date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("WSClient", "connectStomp() Подключение закрыто", String.valueOf(date)));
+                    resetSubscriptions();
+                    if (iwsClient != null) iwsClient.iwsClientCallBack(null, 2);
+                    break;
+                case FAILED_SERVER_HEARTBEAT:
+                    date = new Date();
+                    //InfoAboutMe.stompClient = null;
+                    AllInterface.iLog.addToLog(new LogItem("WSClient", "connectStomp() Ошибка пинга", String.valueOf(date)));
 //                            if(iwsClient != null)
 //                                iwsClient.iwsClientCallBack(null, 3);
-                            break;
-                    }
-                });
+                    break;
+            }
+        });
 
         compositeDisposable.add(dispLifecycle);
         mStompClient.connect(headers);
@@ -103,15 +105,13 @@ public class WSClient implements ISWClientConnect {
 
     //---------------------------------------------------------------------------------
     public CompletableTransformer applySchedulers() {
-        return upstream -> upstream
-                .unsubscribeOn(Schedulers.newThread())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+        return upstream -> upstream.unsubscribeOn(Schedulers.newThread()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 
     @Override
-    public void shutdown(){
-        AllInterface.iLog.addToLog(new LogItem("WSClient","shutdown()",null));
+    public void shutdown() {
+        Date date = new Date();
+        AllInterface.iLog.addToLog(new LogItem("WSClient", "shutdown()", String.valueOf(date)));
         mStompClient.disconnect();
         if (mRestPingDisposable != null) mRestPingDisposable.dispose();
         if (compositeDisposable != null) compositeDisposable.dispose();

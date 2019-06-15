@@ -12,6 +12,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -39,10 +40,12 @@ public class Refresh {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(topicMessage -> {
                     String receive = topicMessage.getPayload();
-                    AllInterface.iLog.addToLog(new LogItem("Refresh -> subscribe","Принято "+receive,null));
+                    Date date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Refresh -> subscribe","Принято "+receive, String.valueOf(date)));
                     iRefreshCallBack.refCallBack(0);
                 }, throwable -> {
-                    AllInterface.iLog.addToLog(new LogItem("Refresh -> subscribe","Ошибка подписки",null));
+                    Date date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Refresh -> subscribe","Ошибка подписки", String.valueOf(date)));
                     Log.e(TAG, "Error on subscribe topic", throwable);
                     iRefreshCallBack.refCallBack(1);
                 });
@@ -67,10 +70,12 @@ public class Refresh {
                 .compose(wsClient.applySchedulers())
                 .subscribe(() -> {
                     Log.d(TAG, "STOMP echo send successfully");
-                    AllInterface.iLog.addToLog(new LogItem("Отправка на обновление","Данные отпрвлены удачно",null));
+                    Date date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Отправка на обновление","Данные отпрвлены удачно", String.valueOf(date)));
                 }, throwable -> {
                     Log.d(TAG, "Error send STOMP echo", throwable);
-                    AllInterface.iLog.addToLog(new LogItem("Отправка на обновление","Ошибка отправки",null));
+                    Date date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Отправка на обновление","Ошибка отправки", String.valueOf(date)));
                     //toast(throwable.getMessage());
                 }));
     }

@@ -11,6 +11,8 @@ import com.example.refactoringwnamqos.intefaces.AllInterface;
 import com.example.refactoringwnamqos.InfoAboutMe;
 import com.example.refactoringwnamqos.enteties.LogItem;
 
+import java.util.Date;
+
 
 public class PhoneState {
 
@@ -35,7 +37,8 @@ public class PhoneState {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED)
             return;
         InfoAboutMe.UUID = String.valueOf(tManager.getDeviceId());
-        AllInterface.iLog.addToLog(new LogItem("Мой UUID",InfoAboutMe.UUID,null));
+        Date date = new Date();
+        AllInterface.iLog.addToLog(new LogItem("Мой UUID",InfoAboutMe.UUID, String.valueOf(date)));
         System.out.println(InfoAboutMe.UUID);
     }
 

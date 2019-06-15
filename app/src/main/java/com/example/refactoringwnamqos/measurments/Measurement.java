@@ -19,6 +19,7 @@ import com.example.refactoringwnamqos.measurments.webauthorizition.WebAuthorObj;
 import com.example.refactoringwnamqos.intefaces.IWifiScanCallBack;
 import com.example.refactoringwnamqos.wifi.WifiItem;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -88,41 +89,50 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
             String type = findMetodMeasurement(mCommands.get(mCurrentConutCommands));
             switch (type){
                 case "SCAN_WIFI":
-                    AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands,"Сканирование сетей", null));
+                    Date date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands,"Сканирование сетей",  String.valueOf(date)));
                     scanWifi2();
                     break;
                 case "ASSOC_SSID":
-                    AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands,"Подлючение к сети", null));
+                    date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands,"Подлючение к сети",  String.valueOf(date)));
                     assoc_ssid();
                     break;
                 case "GET_IPPARAMS":
-                    AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands,"Зарос сетевых параметров", null));
+                    date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands,"Зарос сетевых параметров",  String.valueOf(date)));
                     get_ipparams();
                     break;
                 case "WAIT":
-                    AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands,"Ожидание", null));
+                    date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands,"Ожидание",  String.valueOf(date)));
                     waitTime();
                     break;
                 case "WEBAUTH":
-                    AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands,"Вебавторизвция", null));
+                    date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands,"Вебавторизвция",  String.valueOf(date)));
                     webAuth();
                     break;
                 case "TEST_INTERNET":
-                    AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands,"Тестирование интеренета", null));
+                    date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands,"Тестирование интеренета",  String.valueOf(date)));
                     testInternet();
                     break;
                 case "GET_FILE":
-                    AllInterface.iLog.addToLog(new LogItem("Измерения "+mCurrentConutCommands,"Скачивание файла", null));
+                    date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Измерения "+mCurrentConutCommands,"Скачивание файла",  String.valueOf(date)));
                     downloadFile();
                     break;
                 default:
-                    AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands,"Команда не поддерживается", null));
+                    date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands,"Команда не поддерживается",  String.valueOf(date)));
                     mCurrentConutCommands++;
                     start();
             }
-        } else{
+        } else {
             mMeanObject.setEnd(getTime());
-            AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands,"Измерение завершено", null));
+            Date date = new Date();
+            AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands,"Измерение завершено",  String.valueOf(date)));
             AllInterface.iWifi.disableWifi();
 
             if(timer != null){
@@ -134,13 +144,15 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
             timerTask = new TimerTask() {
                 @Override
                 public void run() {
-                    AllInterface.iLog.addToLog(new LogItem("Measurement -> TimerTask","run()", null));
+                    Date date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Measurement -> TimerTask","run()",  String.valueOf(date)));
                     AllInterface.iswClientConnect.connectStomp();
                     timer.cancel();
                 }
             };
             timer.schedule(timerTask, 5_000);
-            AllInterface.iLog.addToLog(new LogItem("Measurement -> Timer","Старт таймера", null));
+            date = new Date();
+            AllInterface.iLog.addToLog(new LogItem("Measurement -> Timer","Старт таймера",  String.valueOf(date)));
 
         }
     }
@@ -193,7 +205,7 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
 
     @Override
     public void webAuthorCallback(int state){
-        Log.d(TAG, "WEBAUTH - получен коллбек "+state);
+        Log.d(TAG, "WEBAUTH - получен коллбек " + state);
         TCOMMAN_X_ID tcommanXId = mMeanObject.getResults().get(mCurrentConutCommands);
         if(state == 0)tcommanXId.setOutput("OK");
         if(state == 1)tcommanXId.setOutput("TIMEOUT");
@@ -290,7 +302,8 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
         if(state){
             tcommanXId.setOutput("OK");
             setConnectWifi(true);
-            AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands,"Скачивание файла", null));
+            Date date = new Date();
+            AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands,"Скачивание файла",  String.valueOf(date)));
         }
         else tcommanXId.setOutput("TIMEOUT");
         tcommanXId.setEnd(getTime());

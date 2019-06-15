@@ -11,6 +11,7 @@ import com.example.refactoringwnamqos.intefaces.IWSClient;
 import com.example.refactoringwnamqos.websocket.base.WSClient;
 import com.example.refactoringwnamqos.wifi.Wifi;
 
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -37,8 +38,8 @@ public class LoadListSettings implements IWSClient, ILoadTaskCompleted {
         timer = new Timer();
         timerTask = new LoadListSettings.MyTimerTask();
         timer.schedule(timerTask, 1000 * secondsWait);
-
-        AllInterface.iLog.addToLog(new LogItem("Запуск системы", "LoadListSettings->start="+secondsWait, null));
+Date date = new Date();
+        AllInterface.iLog.addToLog(new LogItem("Запуск системы", "LoadListSettings->start=" + secondsWait,  String.valueOf(date)));
     }
 
     class MyTimerTask extends TimerTask {
@@ -46,7 +47,8 @@ public class LoadListSettings implements IWSClient, ILoadTaskCompleted {
         public void run() {
             if(AllInterface.iswClientConnect != null) AllInterface.iswClientConnect.shutdown();
             if(!WorkService.isSeviceStart) return;
-            AllInterface.iLog.addToLog(new LogItem("Запуск системы", "LoadListSettings->MyTimerTask", null));
+            Date date = new Date();
+            AllInterface.iLog.addToLog(new LogItem("Запуск системы", "LoadListSettings->MyTimerTask",  String.valueOf(date)));
             startWork();
         }
     }
@@ -73,7 +75,8 @@ public class LoadListSettings implements IWSClient, ILoadTaskCompleted {
     @Override
     public void iwsClientCallBack(StompClient mStompClient, int code) {
         if(mStompClient != null){
-            AllInterface.iLog.addToLog(new LogItem("Запуск системы", "LoadListSettings->iwsClientCallBack. Connection was succeed", null));
+            Date date = new Date();
+            AllInterface.iLog.addToLog(new LogItem("Запуск системы", "LoadListSettings->iwsClientCallBack. Connection was succeed",  String.valueOf(date)));
             //connection was succeed
 
             if(conTimer != null){
@@ -87,7 +90,8 @@ public class LoadListSettings implements IWSClient, ILoadTaskCompleted {
             regOnServise.start();
         }else {
             //connection was failed
-            AllInterface.iLog.addToLog(new LogItem("Запуск системы", "LoadListSettings->iwsClientCallBack. Connection was failed", null));
+            Date date = new Date();
+            AllInterface.iLog.addToLog(new LogItem("Запуск системы", "LoadListSettings->iwsClientCallBack. Connection was failed",  String.valueOf(date)));
             if(conTimer == null) {
                 wsClient.shutdown();
                 if(timer == null) {
@@ -95,7 +99,8 @@ public class LoadListSettings implements IWSClient, ILoadTaskCompleted {
                     conTimerTask = new LoadListSettings.ConTimerTask();
                     conTimer.schedule(timerTask, 600_000);  //every 10 minutes
                 }
-                AllInterface.iLog.addToLog(new LogItem("Запуск системы", "LoadListSettings->iwsClientCallBack. Try after 10 minutes", null));
+                date = new Date();
+                AllInterface.iLog.addToLog(new LogItem("Запуск системы", "LoadListSettings->iwsClientCallBack. Try after 10 minutes",  String.valueOf(date)));
             }
         }
     }
@@ -104,7 +109,8 @@ public class LoadListSettings implements IWSClient, ILoadTaskCompleted {
         @Override
         public void run() {
             if(WorkService.isSeviceStart == false) return;
-            AllInterface.iLog.addToLog(new LogItem("Запуск системы", "LoadListSettings->ConTimerTask. Try connection", null));
+            Date date = new Date();
+            AllInterface.iLog.addToLog(new LogItem("Запуск системы", "LoadListSettings->ConTimerTask. Try connection",  String.valueOf(date)));
             conTimer.cancel();
             conTimer = null;
             startWSClient();
@@ -114,7 +120,8 @@ public class LoadListSettings implements IWSClient, ILoadTaskCompleted {
     //--------------------------------------------------------
 
     private void startWork(){
-        AllInterface.iLog.addToLog(new LogItem("Запуск системы", "LoadListSettings -> startWork", null));
+        Date date = new Date();
+        AllInterface.iLog.addToLog(new LogItem("Запуск системы", "LoadListSettings -> startWork",  String.valueOf(date)));
         startPhone();
         startWSClient();
     }

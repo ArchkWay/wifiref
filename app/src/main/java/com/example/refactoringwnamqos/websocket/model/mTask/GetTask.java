@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -40,9 +41,11 @@ public class GetTask {
                 .subscribe(topicMessage -> {
                     FGetTask fGetTask = mGson.fromJson(topicMessage.getPayload(), FGetTask.class);
                     iGetTaskCallBack.taskCallBack(0,fGetTask);
-                    AllInterface.iLog.addToLog(new LogItem("GetTask -> subscribe()", topicMessage.getPayload(), null));
+                    Date date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("GetTask -> subscribe()", topicMessage.getPayload(),  String.valueOf(date)));
                 }, throwable -> {
-                    AllInterface.iLog.addToLog(new LogItem("GetTask -> subscribe()", "Error on subscribe topic", null));
+                    Date date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("GetTask -> subscribe()", "Error on subscribe topic",  String.valueOf(date)));
                     iGetTaskCallBack.taskCallBack(1, null);
                 });
 
@@ -63,9 +66,11 @@ public class GetTask {
         wsClient.compositeDisposable.add(wsClient.mStompClient.send(stompMessage)
                 .compose(wsClient.applySchedulers())
                 .subscribe(() -> {
-                    AllInterface.iLog.addToLog(new LogItem("GetTask -> send()", gsonStr, null));
+                    Date date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("GetTask -> send()", gsonStr,  String.valueOf(date)));
                 }, throwable -> {
-                    AllInterface.iLog.addToLog(new LogItem("GetTask -> send()", "Error send STOMP echo", null));
+                    Date date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("GetTask -> send()", "Error send STOMP echo",  String.valueOf(date)));
                     //toast(throwable.getMessage());
                 }));
     }

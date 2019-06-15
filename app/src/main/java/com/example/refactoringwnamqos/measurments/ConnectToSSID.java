@@ -13,6 +13,7 @@ import com.example.refactoringwnamqos.InfoAboutMe;
 import com.example.refactoringwnamqos.enteties.LogItem;
 import com.example.refactoringwnamqos.intefaces.IWifiConnectCallBack;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -32,7 +33,8 @@ public class ConnectToSSID {
     }
 
     public void connect(String ssid, IWifiConnectCallBack iWifiConnectCallBack, int timeout) {
-        AllInterface.iLog.addToLog(new LogItem("Подключение к сети","Сеть - "+ssid, null));
+        Date date = new Date();
+        AllInterface.iLog.addToLog(new LogItem("Подключение к сети","Сеть - "+ssid,  String.valueOf(date)));
         this.iWifiConnectCallBack = iWifiConnectCallBack;
         WifiConfiguration conf = new WifiConfiguration();
         conf.SSID = "\"" + ssid + "\"";
@@ -58,15 +60,17 @@ public class ConnectToSSID {
         @Override
         public void onReceive(Context context, Intent intent) {
             WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+            Date date = new Date();
             AllInterface.iLog.addToLog(new LogItem("ConnectToSSID->wifiReceiverCon.",
                     "RX  SUPPLICANT_STATE_CHANGED_ACTION. WifiReceiverCon " + wifiInfo.toString() + " "
-                            + "WifiReceiverCon " + toSsid + " " + wifiInfo.getSSID(), null));
+                            + "WifiReceiverCon " + toSsid + " " + wifiInfo.getSSID(),  String.valueOf(date)));
 
             if (!wifiInfo.getSupplicantState().toString().equals("COMPLETED")){
                 if(wifiInfo.getSSID().equals("\""+toSsid+"\"")) {
                     try {
                         context.unregisterReceiver(this);
-                        AllInterface.iLog.addToLog(new LogItem("ConnectToSSID->wifiReceiverCon.","RX SUPPLICANT_STATE_CHANGED_ACTION -> COMPLETED", null));
+                        date = new Date();
+                        AllInterface.iLog.addToLog(new LogItem("ConnectToSSID->wifiReceiverCon.","RX SUPPLICANT_STATE_CHANGED_ACTION -> COMPLETED",  String.valueOf(date)));
                         timerWDT.cancel();
                         timerWDT = null;
                         timerTaskWDT = null;
@@ -85,7 +89,8 @@ public class ConnectToSSID {
         conf.SSID = "\"" + ssid + "\"";
         conf.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
         wifiManager.addNetwork(conf);
-        AllInterface.iLog.addToLog(new LogItem("ConnectToSSID->addNetwork"," "+ssid, null));
+        Date date = new Date();
+        AllInterface.iLog.addToLog(new LogItem("ConnectToSSID->addNetwork"," "+ssid,  String.valueOf(date)));
     }
 
     class MyTimerTaskWDT extends TimerTask {
@@ -93,7 +98,8 @@ public class ConnectToSSID {
         public void run() {
             InfoAboutMe.context.unregisterReceiver(wifiReceiverCon);
             iWifiConnectCallBack.wifiConnectCallBack(false);
-            AllInterface.iLog.addToLog(new LogItem("ConnectToSSID->MyTimerTaskWDT","run()", null));
+            Date date = new Date();
+            AllInterface.iLog.addToLog(new LogItem("ConnectToSSID->MyTimerTaskWDT","run()",  String.valueOf(date)));
         }
     }
 

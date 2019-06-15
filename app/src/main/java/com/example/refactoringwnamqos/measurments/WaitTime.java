@@ -4,6 +4,7 @@ import com.example.refactoringwnamqos.intefaces.AllInterface;
 import com.example.refactoringwnamqos.enteties.LogItem;
 import com.example.refactoringwnamqos.intefaces.IWaitTime;
 
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -22,13 +23,15 @@ public class WaitTime {
         timer = new Timer();
         timerTask = new MyTimerTask();
         timer.schedule(timerTask, 1000*seconds);
-        AllInterface.iLog.addToLog(new LogItem("WaitTime","start()", null));
+        Date date = new Date();
+        AllInterface.iLog.addToLog(new LogItem("WaitTime","start()", String.valueOf(date)));
     }
 
     class MyTimerTask extends TimerTask {
         @Override
         public void run() {
-            AllInterface.iLog.addToLog(new LogItem("WaitTime->MyTimerTask","run()", null));
+            Date date = new Date();
+            AllInterface.iLog.addToLog(new LogItem("WaitTime->MyTimerTask","run()", String.valueOf(date)));
             iWaitTime.waitCallBack();
         }
     }

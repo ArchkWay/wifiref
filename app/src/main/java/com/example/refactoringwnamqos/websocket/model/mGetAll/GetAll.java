@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -46,12 +47,14 @@ public class GetAll {
                 .subscribe(topicMessage -> {
                     timerWDT.cancel();
                     Log.d(TAG, "Received getall" + topicMessage.getPayload());
-                    AllInterface.iLog.addToLog(new LogItem("Подписка GetAll","Принято "+topicMessage.getPayload(),null));
+                    Date date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Подписка GetAll","Принято "+topicMessage.getPayload(), String.valueOf(date)));
                     FGetAll fGetAll = mGson.fromJson(topicMessage.getPayload(), FGetAll.class);
                     iAllCallback.allCallBack(0, fGetAll);
                     System.out.println(topicMessage.getPayload());
                 }, throwable -> {
-                    AllInterface.iLog.addToLog(new LogItem("Подписка GetAll","Ошибка подписки",null));
+                    Date date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Подписка GetAll","Ошибка подписки", String.valueOf(date)));
                     iAllCallback.allCallBack(1, null);
                     Log.e(TAG, "Error on subscribe topic", throwable);
                 });
@@ -79,10 +82,12 @@ public class GetAll {
                 .compose(wsClient.applySchedulers())
                 .subscribe(() -> {
                     Log.d(TAG, "STOMP echo send successfully");
-                    AllInterface.iLog.addToLog(new LogItem("Отправка GetAll","Данные отпрвлены удачно ",null));
+                    Date date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Отправка GetAll","Данные отпрвлены удачно ", String.valueOf(date)));
                 }, throwable -> {
                     Log.d(TAG, "Error send STOMP echo", throwable);
-                    AllInterface.iLog.addToLog(new LogItem("Отправка GetAll","Ошибка отправки",null));
+                    Date date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Отправка GetAll","Ошибка отправки", String.valueOf(date)));
                     //toast(throwable.getMessage());
                 }));
     }
@@ -91,7 +96,8 @@ public class GetAll {
 
         @Override
         public void run() {
-            AllInterface.iLog.addToLog(new LogItem("GetAll -> MyTimerTask","run()",null));
+            Date date = new Date();
+            AllInterface.iLog.addToLog(new LogItem("GetAll -> MyTimerTask","run()", String.valueOf(date)));
             if(countWDT==3){
                 timerWDT.cancel();
             }else{

@@ -5,6 +5,7 @@ import com.example.refactoringwnamqos.enteties.LogItem;
 import com.example.refactoringwnamqos.intefaces.IWebCallBack1;
 
 import java.io.IOException;
+import java.util.Date;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -25,7 +26,8 @@ public class OkRequest {
     public void getRequest(String url){
         OkHttpClient okHttpClient = new OkHttpClient();
 
-        AllInterface.iLog.addToLog(new LogItem("OkRequest","getRequest() url - "+url, null));
+        Date date = new Date();
+        AllInterface.iLog.addToLog(new LogItem("OkRequest","getRequest() url - "+url,  String.valueOf(date)));
         Request request = new Request.Builder()
                 .url(url)
                 .build();
@@ -35,14 +37,16 @@ public class OkRequest {
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
                 iWebCallBack1.callBack("OkRequest -> getRequest -> onResponse = Error");
-                AllInterface.iLog.addToLog(new LogItem("OkRequest","onFailure()", null));
+                Date date = new Date();
+                AllInterface.iLog.addToLog(new LogItem("OkRequest","onFailure()",  String.valueOf(date)));
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if(response.isSuccessful()){
                     String okResponse = response.body().string();
-                    AllInterface.iLog.addToLog(new LogItem("OkRequest","onResponse = "+okResponse, null));
+                    Date date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("OkRequest","onResponse = "+okResponse,  String.valueOf(date)));
                     iWebCallBack1.callBack(okResponse);
                 }
             }
@@ -61,8 +65,8 @@ public class OkRequest {
             requestBody = "code="+obj.getCode()+"&phone="+obj.getTel()+"&vualya_agree=-1";
             url = obj.getUrl_3();
         }
-
-        AllInterface.iLog.addToLog(new LogItem("OkRequest","postReqest = "+url+" body "+requestBody, null));
+    Date date = new Date();
+        AllInterface.iLog.addToLog(new LogItem("OkRequest","postReqest = "+url+" body "+requestBody,  String.valueOf(date)));
 
         MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded; charset=UTF-8");
         RequestBody body = RequestBody.create(mediaType, requestBody);
@@ -76,14 +80,16 @@ public class OkRequest {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
-                AllInterface.iLog.addToLog(new LogItem("OkRequest","postReqest -> okHttpClient.newCall -> onFailure()", null));
+                Date date = new Date();
+                AllInterface.iLog.addToLog(new LogItem("OkRequest","postReqest -> okHttpClient.newCall -> onFailure()",  String.valueOf(date)));
                 iWebCallBack1.callBack("Error");
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String okResponse = response.body().string();
-                AllInterface.iLog.addToLog(new LogItem("OkRequest","postReqest -> okHttpClient.newCall -> onResponse() = "+okResponse, null));
+                Date date = new Date();
+                AllInterface.iLog.addToLog(new LogItem("OkRequest","postReqest -> okHttpClient.newCall -> onResponse() = "+okResponse,  String.valueOf(date)));
                 iWebCallBack1.callBack(okResponse);
             }
         });

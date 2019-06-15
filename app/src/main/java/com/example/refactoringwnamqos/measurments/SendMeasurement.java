@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -40,12 +41,14 @@ public class SendMeasurement implements ISendMeasurement {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(topicMessage -> {
                     Log.d(TAG, "Received " + topicMessage.getPayload());
-                    AllInterface.iLog.addToLog(new LogItem("Удачно","Ответ от сервера при отправке сообщения",null));
+                    Date date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Удачно","Ответ от сервера при отправке сообщения",String.valueOf(date)));
                     FSendMeasurement fSendMeasurement = mGson.fromJson(topicMessage.getPayload(), FSendMeasurement.class);
 
                     //iLoadMeasurCallback.loadMeasurCallBack(fSendMeasurement);
                 }, throwable -> {
-                    AllInterface.iLog.addToLog(new LogItem("Ошибка","Отправка измерения",null));
+                    Date date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Ошибка","Отправка измерения",String.valueOf(date)));
                     Log.e(TAG, "Error on subscribe topic", throwable);
 
                 });
@@ -69,11 +72,13 @@ public class SendMeasurement implements ISendMeasurement {
                 .compose(wsClient.applySchedulers())
                 .subscribe(() -> {
                     Log.d(TAG, "STOMP echo send successfully");
-                    AllInterface.iLog.addToLog(new LogItem("Удачно","Измерение отправлено удачно "+gsonStr,null));
+                    Date date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Удачно","Измерение отправлено удачно "+gsonStr,String.valueOf(date)));
                     RegOnServise.isConnectinAfterMeasumerent=false;
                 }, throwable -> {
                     Log.d(TAG, "Error send STOMP echo", throwable);
-                    AllInterface.iLog.addToLog(new LogItem("Ошибка","Измерение отправлено неудачно",null));
+                    Date date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Ошибка","Измерение отправлено неудачно",String.valueOf(date)));
                     //toast(throwable.getMessage());
                 }));
     }

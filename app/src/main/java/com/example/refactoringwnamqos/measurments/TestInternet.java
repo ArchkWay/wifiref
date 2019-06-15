@@ -4,12 +4,14 @@ import com.example.refactoringwnamqos.intefaces.AllInterface;
 import com.example.refactoringwnamqos.enteties.LogItem;
 
 import java.io.IOException;
+import java.util.Date;
 
 
 public class TestInternet {
 
     public boolean executeCommand(){
-        AllInterface.iLog.addToLog(new LogItem("TestInternet","executeCommand()", null));
+        Date date = new Date();
+        AllInterface.iLog.addToLog(new LogItem("TestInternet","executeCommand()", String.valueOf(date)));
         System.out.println("executeCommand");
         Runtime runtime = Runtime.getRuntime();
         try {
