@@ -4,7 +4,7 @@ package com.example.refactoringwnamqos.websocket.model.mMeasurement;
 import android.util.Log;
 
 import com.example.refactoringwnamqos.intefaces.AllInterface;
-import com.example.refactoringwnamqos.businessLogic.RegOnServise;
+import com.example.refactoringwnamqos.businessLogic.RegOnService;
 import com.example.refactoringwnamqos.enteties.LogItem;
 import com.example.refactoringwnamqos.intefaces.ISendMeasurement;
 import com.example.refactoringwnamqos.measurments.MeanObject;
@@ -60,6 +60,7 @@ public class SendMeasurement implements ISendMeasurement {
     @Override
     public void sendMeanObject(MeanObject meanObject) {
 
+        meanObject.setStatus(true);
         String gsonStr = mGson.toJson(meanObject);
         Log.d(TAG, "gson measurement/send "+gsonStr);
 
@@ -76,7 +77,7 @@ public class SendMeasurement implements ISendMeasurement {
                     Log.d(TAG, "STOMP echo send successfully");
                     Date date = new Date();
                     AllInterface.iLog.addToLog(new LogItem("Удачно","Измерение отправлено удачно "+gsonStr,String.valueOf(date)));
-                    RegOnServise.isConnectinAfterMeasumerent = false;
+                    RegOnService.isConnectAfterMeasumerent = false;
                 }, throwable -> {
                     Log.d(TAG, "Error send STOMP echo", throwable);
                     Date date = new Date();

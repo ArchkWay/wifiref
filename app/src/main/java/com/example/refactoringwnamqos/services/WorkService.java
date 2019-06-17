@@ -1,26 +1,18 @@
 package com.example.refactoringwnamqos.services;
 
-import android.app.Notification;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
 
 import com.example.refactoringwnamqos.InfoAboutMe;
-import com.example.refactoringwnamqos.MainActivity;
-import com.example.refactoringwnamqos.R;
 import com.example.refactoringwnamqos.businessLogic.LoadListSettings;
-import com.example.refactoringwnamqos.businessLogic.RegOnServise;
+import com.example.refactoringwnamqos.businessLogic.RegOnService;
 import com.example.refactoringwnamqos.enteties.LogItem;
 import com.example.refactoringwnamqos.intefaces.AllInterface;
 import com.example.refactoringwnamqos.logs.WorkWithLog;
 
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
-
-import static com.example.refactoringwnamqos.App.CHANNEL_ID;
 
 
 public class WorkService extends Service {
@@ -74,7 +66,7 @@ public class WorkService extends Service {
 
         LoadListSettings loadListSettings = new LoadListSettings();
         loadListSettings.start(10);
-        RegOnServise.isConnectinAfterMeasumerent = false;
+        RegOnService.isConnectAfterMeasumerent = false;
     }
 
 

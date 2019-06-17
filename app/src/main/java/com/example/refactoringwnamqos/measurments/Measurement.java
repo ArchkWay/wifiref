@@ -5,7 +5,7 @@ import android.util.Log;
 import com.example.refactoringwnamqos.intefaces.AllInterface;
 import com.example.refactoringwnamqos.intefaces.IReconnectStomp;
 import com.example.refactoringwnamqos.businessLogic.JobToMerge;
-import com.example.refactoringwnamqos.businessLogic.RegOnServise;
+import com.example.refactoringwnamqos.businessLogic.RegOnService;
 import com.example.refactoringwnamqos.enteties.LogItem;
 import com.example.refactoringwnamqos.enteties.jGetTask.FGetTaskCommands;
 import com.example.refactoringwnamqos.enteties.jGetTask.FGetTaskData;
@@ -58,7 +58,7 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
 
     public void preparation(){
 
-        RegOnServise.isConnectinAfterMeasumerent = true;
+        RegOnService.isConnectAfterMeasumerent = true;
 
         for(int q = 0; q < mJob.getListTasks().size(); q++){
            mTask = mJob.getListTasks().get(q);
@@ -84,12 +84,12 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
     }
 
     private void start(){
-        Date date = new Date();
+        Date date;
         if(mCurrentConutCommands < mCountCommands){
-            String type = findMetodMeasurement(mCommands.get(mCurrentConutCommands));
-            switch (type){
+            String type = findMethodMeasurement(mCommands.get(mCurrentConutCommands));
+            switch (type) {
                 case "SCAN_WIFI":
-
+                    date = new Date();
                     AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands,"Сканирование сетей",  String.valueOf(date)));
                     scanWifi2();
                     break;
@@ -175,6 +175,8 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
             tcommanXId.setOutput("ERROR");
         }
         tcommanXId.setEnd(getTime());
+        tcommanXId.setStatus(true);
+        mMeanObject.getResults().set(mCurrentConutCommands, tcommanXId);
         mCurrentConutCommands++;
         start();
     }
@@ -200,6 +202,8 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
 
         WebAuthor webAuthor = new WebAuthor(webAuthorObj, this, timeout);
         webAuthor.step1();
+        tcommanXId.setStatus(true);
+        mMeanObject.getResults().set(mCurrentConutCommands, tcommanXId);
     }
 
 
@@ -217,13 +221,14 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
 
     //------------------------------------------------------------------------------------
     private void waitTime() {
-
         WaitTime waitTime = new WaitTime(this);
         FGetTaskCommands command = mCommands.get(mCurrentConutCommands);
         TCOMMAN_X_ID tcommanXId = mMeanObject.getResults().get(mCurrentConutCommands);
         tcommanXId.setBegin(getTime());
         int seconds = Integer.valueOf(command.getParameters().getTime());
         waitTime.start(seconds);
+        tcommanXId.setStatus(true);
+        mMeanObject.getResults().set(mCurrentConutCommands, tcommanXId);
     }
 
     @Override
@@ -245,18 +250,22 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
         tcommanXId.setOutput(wifiInfoObject);
         tcommanXId.setEnd(getTime());
         String str = wifiInfoObject.getIpaddr();
+
         if (str.equals("NaN")){
             connectWifi = false;
+            tcommanXId.setStatus(true);
         }
-        else connectWifi = true;
-
-
+        else {
+            connectWifi = true;
+            tcommanXId.setStatus(true);
+        }
+        mMeanObject.getResults().set(mCurrentConutCommands, tcommanXId);
 
         mCurrentConutCommands++;
         start();
     }
 
-    private String findMetodMeasurement(FGetTaskCommands command) {
+    private String findMethodMeasurement(FGetTaskCommands command) {
         return command.getType();
     }
 
@@ -267,6 +276,8 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
         tcommanXId.setBegin(getTime());
         int timeout = mCommands.get(mCurrentConutCommands).getTimeout();
         new WifiScan().scanWifi(this, timeout);
+        tcommanXId.setStatus(true);
+        tcomman_x_ids.set(mCurrentConutCommands, tcommanXId);
     }
 
     @Override
@@ -293,6 +304,8 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
         ConnectToSSID connectToSSID = new ConnectToSSID();
         connectToSSID.addNetwork(ssid);
         connectToSSID.connect(ssid, this, timeout);
+        tcommanXId.setStatus(true);
+        mMeanObject.getResults().set(mCurrentConutCommands, tcommanXId);
     }
 
     @Override
@@ -321,7 +334,7 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
     @Override
     public void success() {
         AllInterface.iSendMeasurement.sendMeanObject(mMeanObject);
-        RegOnServise.isConnectinAfterMeasumerent = false;
+        RegOnService.isConnectAfterMeasumerent = false;
     }
 
     //----------------------------------------------------
@@ -339,6 +352,8 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
         else{
             tcommanXId.setOutput("ERROR");
             tcommanXId.setEnd(getTime());
+            tcommanXId.setStatus(true);
+            mMeanObject.getResults().set(mCurrentConutCommands, tcommanXId);
             mCurrentConutCommands++;
             start();
         }

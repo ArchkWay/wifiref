@@ -27,7 +27,7 @@ public class LoadListSettings implements IWSClient, ILoadTaskCompleted {
     TimerTask timerTask;
     Timer conTimer;
     TimerTask conTimerTask;
-    RegOnServise regOnServise;
+    RegOnService regOnService;
     ScheduleMeasurement scheduleMeasurement;
 
     public static boolean isLoad = false;
@@ -60,11 +60,11 @@ public class LoadListSettings implements IWSClient, ILoadTaskCompleted {
      */
     @Override
     public void jobCallback(JobToMerge job) {
-        if(!RegOnServise.isConnectinAfterMeasumerent) {
+        if(!RegOnService.isConnectAfterMeasumerent) {
             formationMeasurement.create(job);
             scheduleMeasurement = new ScheduleMeasurement();
             scheduleMeasurement.start(job);
-            RegOnServise.isConnectinAfterMeasumerent = true;
+            RegOnService.isConnectAfterMeasumerent = true;
         } else{
             AllInterface.iReconnectStomp.success();
         }
@@ -83,8 +83,8 @@ public class LoadListSettings implements IWSClient, ILoadTaskCompleted {
             }
 
             formationMeasurement = new FormationMeasurement();
-            regOnServise = new RegOnServise(wsClient, this);
-            regOnServise.start();
+            regOnService = new RegOnService(wsClient, this);
+            regOnService.start();
         }else {
             //connection was failed
             AllInterface.iLog.addToLog(new LogItem("Запуск системы", "LoadListSettings->iwsClientCallBack. Connection was failed",  String.valueOf(date)));

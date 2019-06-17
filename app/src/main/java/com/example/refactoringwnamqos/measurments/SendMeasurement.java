@@ -3,7 +3,7 @@ package com.example.refactoringwnamqos.measurments;
 import android.util.Log;
 
 import com.example.refactoringwnamqos.intefaces.AllInterface;
-import com.example.refactoringwnamqos.businessLogic.RegOnServise;
+import com.example.refactoringwnamqos.businessLogic.RegOnService;
 import com.example.refactoringwnamqos.enteties.LogItem;
 import com.example.refactoringwnamqos.intefaces.ISendMeasurement;
 import com.example.refactoringwnamqos.enteties.modelJson.jMeasurement.jSendMeasurement.FSendMeasurement;
@@ -44,7 +44,6 @@ public class SendMeasurement implements ISendMeasurement {
                     Date date = new Date();
                     AllInterface.iLog.addToLog(new LogItem("Удачно","Ответ от сервера при отправке сообщения",String.valueOf(date)));
                     FSendMeasurement fSendMeasurement = mGson.fromJson(topicMessage.getPayload(), FSendMeasurement.class);
-
                     //iLoadMeasurCallback.loadMeasurCallBack(fSendMeasurement);
                 }, throwable -> {
                     Date date = new Date();
@@ -57,6 +56,12 @@ public class SendMeasurement implements ISendMeasurement {
 
     @Override
     public void sendMeanObject(MeanObject meanObject) {
+        for(int i = 0; i < meanObject.getResults().size(); i++){
+            if(meanObject.getResults().get(i).getStatus()){
+                meanObject.setStatus(true);
+            }
+            else meanObject.setStatus(false);
+        }
 
         String gsonStr = mGson.toJson(meanObject);
         Log.d(TAG, "gson measurement/send "+gsonStr);
@@ -74,7 +79,7 @@ public class SendMeasurement implements ISendMeasurement {
                     Log.d(TAG, "STOMP echo send successfully");
                     Date date = new Date();
                     AllInterface.iLog.addToLog(new LogItem("Удачно","Измерение отправлено удачно "+gsonStr,String.valueOf(date)));
-                    RegOnServise.isConnectinAfterMeasumerent=false;
+                    RegOnService.isConnectAfterMeasumerent =false;
                 }, throwable -> {
                     Log.d(TAG, "Error send STOMP echo", throwable);
                     Date date = new Date();

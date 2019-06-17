@@ -5,6 +5,7 @@ public class TCOMMAN_X_ID {
     private String begin;
     private String end;
     private Object output;
+    private boolean status;
 
 
     public TCOMMAN_X_ID(){}
@@ -14,6 +15,14 @@ public class TCOMMAN_X_ID {
         this.begin = begin;
         this.end = end;
         this.output = output;
+    }
+
+    public boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 
     public String getCommandId() {

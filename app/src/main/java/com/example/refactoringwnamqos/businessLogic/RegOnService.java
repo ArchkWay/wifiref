@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class RegOnServise implements IRegCallBack, IAllCallback, IGetTaskCallBack {
+public class RegOnService implements IRegCallBack, IAllCallback, IGetTaskCallBack {
     private WSClient wsClient;
     private GetAll getAll;
     private GetTask getTask;
@@ -35,9 +35,9 @@ public class RegOnServise implements IRegCallBack, IAllCallback, IGetTaskCallBac
     private List <FGetAllData> listSchedules;
     private List <FGetTaskData> listTasks;
 
-    public static boolean isConnectinAfterMeasumerent = false;
+    public static boolean isConnectAfterMeasumerent = false;
 
-    public RegOnServise(WSClient wsClient, ILoadTaskCompleted iLoadTaskCompleted) {
+    public RegOnService(WSClient wsClient, ILoadTaskCompleted iLoadTaskCompleted) {
         this.wsClient = wsClient;
         this.iLoadTaskCompleted = iLoadTaskCompleted;
     }

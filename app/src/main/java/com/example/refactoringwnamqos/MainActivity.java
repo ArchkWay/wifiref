@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
 
     WorkWithLog workWithLog;
     private static final String TAG = "MainActivity";
-//    Button button;
+    Button button;
     Location location;
     double latitude;
     double longitude;
@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         InfoAboutMe.context = getApplicationContext();
-//        button = findViewById(R.id.btnDoWork);
+        button = findViewById(R.id.btnDoWork);
         writingLogs();
         recyclerView = findViewById(R.id.recycler_view);
         initRecyclerView();
@@ -62,15 +62,15 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-//        if(WorkService.isSeviceStart) {
-//            button.setText("Завершить работу");
-//        }else{
-//            button.setText("Запустить работу");
-//        }
-//        button = findViewById(R.id.btnDoWork);
+        if(WorkService.isSeviceStart) {
+            button.setText("Завершить работу");
+        }else{
+            button.setText("Запустить работу");
+        }
+        button = findViewById(R.id.btnDoWork);
         isStoragePermissionGranted();
 
-//        button.setOnClickListener(v -> startService());
+        button.setOnClickListener(v -> startService());
                 startService();
     };
 
