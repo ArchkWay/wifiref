@@ -96,7 +96,8 @@ public class RegOnService implements IRegCallBack, IAllCallback, IGetTaskCallBac
         }
         currId++;
         listTasks.add(fGetTask.getData());
-        if (currId < countId) {//if not a task - returning for it
+        if (currId < countId) {
+            //if not a task - returning for it
             getTask.send(listSchedules.get(currId).getTask());
         } else {
             JobToMerge job = new JobToMerge(listSchedules, listTasks, null);
@@ -113,7 +114,7 @@ public class RegOnService implements IRegCallBack, IAllCallback, IGetTaskCallBac
         refreshAction = new RefreshAction();
         refresh.subscribe(refreshAction);
         sendMeasurement = new SendMeasurement(wsClient);
-        sendMeasurement.subscribe(null);
+        sendMeasurement.subscribe();
     }
     //---------------------------
 }

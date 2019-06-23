@@ -8,11 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.example.refactoringwnamqos.R;
 import com.example.refactoringwnamqos.enteties.LogItem;
-
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -35,23 +32,18 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.MyViewHodler>{
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.item_log, viewGroup, false);
         return new MyViewHodler(view);
-
-
     }
 
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull LogAdapter.MyViewHodler myViewHodler, int i) {
         LogItem logItem = logItems.get(i);
-
         myViewHodler.textCaption.setText(logItem.getmCaption());
         @SuppressLint("SimpleDateFormat")
         SimpleDateFormat formatForDateNow = new SimpleDateFormat("E yyyy.MM.dd 'время' hh:mm:ss");
         Date parsingDate = new Date(Long.parseLong(logItem.getmDate())*1000);
         String date = formatForDateNow.format(parsingDate);
         myViewHodler.textData.setText(logItem.getmInfo() + " в " + date);
-
-
     }
 
     @Override

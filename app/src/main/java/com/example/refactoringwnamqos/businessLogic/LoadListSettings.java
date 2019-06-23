@@ -81,7 +81,6 @@ public class LoadListSettings implements IWSClient, ILoadTaskCompleted {
                 conTimer=null;
                 conTimerTask = null;
             }
-
             formationMeasurement = new FormationMeasurement();
             regOnService = new RegOnService(wsClient, this);
             regOnService.start();
@@ -93,7 +92,7 @@ public class LoadListSettings implements IWSClient, ILoadTaskCompleted {
                 if(timer == null) {
                     conTimer = new Timer();
                     conTimerTask = new LoadListSettings.ConTimerTask();
-                    conTimer.schedule(timerTask, 600_000);  //every 10 minutes
+//                    conTimer.schedule(timerTask, 600_000);  //every 10 minutes
                 }
                 AllInterface.iLog.addToLog(new LogItem("Запуск системы", "LoadListSettings->iwsClientCallBack. Try after 10 minutes",  String.valueOf(date)));
             }

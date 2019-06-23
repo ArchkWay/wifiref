@@ -26,6 +26,7 @@ import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 public class Wifi implements IWifi {
@@ -182,6 +183,11 @@ public class Wifi implements IWifi {
     @Override
     public WifiInfoObject getWifiInfo(){
         ConnectivityManager conManager = (ConnectivityManager) context.getSystemService(Service.CONNECTIVITY_SERVICE);
+        try {
+            TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         Network network = conManager.getActiveNetwork();
         DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
         WifiInfoObject wifiInfoObject = new WifiInfoObject();

@@ -40,20 +40,24 @@ public class ConnectToSSID {
         conf.SSID = "\"" + ssid + "\"";
         toSsid = ssid;
 
-        timerWDT = new Timer();
-        timerTaskWDT = new ConnectToSSID.MyTimerTaskWDT();
-        timerWDT.schedule(timerTaskWDT, 1000*timeout);
+//        timerWDT = new Timer();
+//        timerTaskWDT = new ConnectToSSID.MyTimerTaskWDT();
+//        timerWDT.schedule(timerTaskWDT, 1000*timeout);
 
         List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
-        for (WifiConfiguration i : list) {
-            if (i.SSID != null && i.SSID.equals("\"" + ssid + "\"")) {
-                InfoAboutMe.context.registerReceiver(wifiReceiverCon, new IntentFilter(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION));
-                wifiManager.disconnect();
-                wifiManager.enableNetwork(i.networkId, true);
-                wifiManager.reconnect();
-                break;
+        try {
+            for (WifiConfiguration i : list) {
+                if (i.SSID != null && i.SSID.equals("\"" + ssid + "\"")) {
+                    InfoAboutMe.context.registerReceiver(wifiReceiverCon, new IntentFilter(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION));
+                    wifiManager.disconnect();
+                    wifiManager.enableNetwork(i.networkId, true);
+                    wifiManager.reconnect();
+                    break;
+                }
             }
         }
+        catch (Exception e){}
+
     }
 
     BroadcastReceiver wifiReceiverCon = new BroadcastReceiver() {
@@ -96,10 +100,10 @@ public class ConnectToSSID {
     class MyTimerTaskWDT extends TimerTask {
         @Override
         public void run() {
-            InfoAboutMe.context.unregisterReceiver(wifiReceiverCon);
-            iWifiConnectCallBack.wifiConnectCallBack(false);
-            Date date = new Date();
-            AllInterface.iLog.addToLog(new LogItem("ConnectToSSID->MyTimerTaskWDT","run()",  String.valueOf(date)));
+//            InfoAboutMe.context.unregisterReceiver(wifiReceiverCon);
+//            iWifiConnectCallBack.wifiConnectCallBack(false);
+//            Date date = new Date();
+//            AllInterface.iLog.addToLog(new LogItem("ConnectToSSID->MyTimerTaskWDT","run()",  String.valueOf(date)));
         }
     }
 

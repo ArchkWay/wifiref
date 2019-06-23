@@ -10,15 +10,19 @@ import com.example.refactoringwnamqos.businessLogic.LoadListSettings;
 import com.example.refactoringwnamqos.businessLogic.RegOnService;
 import com.example.refactoringwnamqos.enteties.LogItem;
 import com.example.refactoringwnamqos.intefaces.AllInterface;
+import com.example.refactoringwnamqos.intefaces.ISendMeasureCallBack;
 import com.example.refactoringwnamqos.logs.WorkWithLog;
+import com.example.refactoringwnamqos.measurments.ISendMeasurment;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 
-public class WorkService extends Service {
+public class WorkService extends Service  {
 
     public static boolean isSeviceStart = false;
     boolean endless = true;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -28,18 +32,18 @@ public class WorkService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 //        new Thread(() -> {
 //            while (endless) {
-             starter();
-//             try {
-//                 TimeUnit.SECONDS.sleep(600);
-//             } catch (InterruptedException e) {
-//                 e.printStackTrace();
-//             }
+                starter();
+//                try {
+//                    TimeUnit.SECONDS.sleep(120);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
 //            }
-//            }).start();
+//        }).start();
         return START_REDELIVER_INTENT;
     }
 
-    private void starter(){
+    private void starter() {
         isSeviceStart = true;
         Date date = new Date();
         InfoAboutMe.startTime = System.currentTimeMillis();
@@ -65,17 +69,15 @@ public class WorkService extends Service {
 //        this.startActivity(i);
 
         LoadListSettings loadListSettings = new LoadListSettings();
-        loadListSettings.start(10);
+        loadListSettings.start(1);
         RegOnService.isConnectAfterMeasumerent = false;
     }
 
 
-
     @Override
     public void onDestroy() {
-        if(AllInterface.iswClientConnect != null)
-            AllInterface.iswClientConnect.shutdown();
-        if(AllInterface.iScheduleMeasurement !=null)
+        if (AllInterface.iswClientConnect != null) AllInterface.iswClientConnect.shutdown();
+        if (AllInterface.iScheduleMeasurement != null)
             AllInterface.iScheduleMeasurement.stopSchedule();
         Date date = new Date();
         AllInterface.iLog.addToLog(new LogItem("WorkService", "onDestroy() Завершение работы сервиса", String.valueOf(date)));
@@ -84,11 +86,11 @@ public class WorkService extends Service {
     }
 
 
-
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
+
 
 }

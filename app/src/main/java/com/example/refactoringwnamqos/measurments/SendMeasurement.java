@@ -6,9 +6,7 @@ import com.example.refactoringwnamqos.intefaces.AllInterface;
 import com.example.refactoringwnamqos.businessLogic.RegOnService;
 import com.example.refactoringwnamqos.enteties.LogItem;
 import com.example.refactoringwnamqos.intefaces.ISendMeasurement;
-import com.example.refactoringwnamqos.enteties.modelJson.jMeasurement.jSendMeasurement.FSendMeasurement;
 import com.example.refactoringwnamqos.websocket.base.WSClient;
-import com.example.refactoringwnamqos.intefaces.ILoadMeasurCallback;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -23,6 +21,7 @@ import ua.naiksoftware.stomp.dto.StompCommand;
 import ua.naiksoftware.stomp.dto.StompHeader;
 import ua.naiksoftware.stomp.dto.StompMessage;
 
+
 public class SendMeasurement implements ISendMeasurement {
     public static final String TAG = "WSClient";
     private WSClient wsClient;
@@ -34,7 +33,7 @@ public class SendMeasurement implements ISendMeasurement {
 
     }
 
-    public void subscribe(ILoadMeasurCallback iLoadMeasurCallback){
+    public void subscribe(){
         // Receive greetings
         Disposable dispTopic = wsClient.mStompClient.topic("/user/queue/measurement/send")
                 .subscribeOn(Schedulers.io())
@@ -43,8 +42,6 @@ public class SendMeasurement implements ISendMeasurement {
                     Log.d(TAG, "Received " + topicMessage.getPayload());
                     Date date = new Date();
                     AllInterface.iLog.addToLog(new LogItem("Удачно","Ответ от сервера при отправке сообщения",String.valueOf(date)));
-                    FSendMeasurement fSendMeasurement = mGson.fromJson(topicMessage.getPayload(), FSendMeasurement.class);
-                    //iLoadMeasurCallback.loadMeasurCallBack(fSendMeasurement);
                 }, throwable -> {
                     Date date = new Date();
                     AllInterface.iLog.addToLog(new LogItem("Ошибка","Отправка измерения",String.valueOf(date)));
@@ -60,7 +57,10 @@ public class SendMeasurement implements ISendMeasurement {
             if(meanObject.getResults().get(i).getStatus()){
                 meanObject.setStatus(true);
             }
-            else meanObject.setStatus(false);
+            else {
+                meanObject.setStatus(false);
+                break;
+            }
         }
 
         String gsonStr = mGson.toJson(meanObject);

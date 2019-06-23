@@ -18,10 +18,13 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.refactoringwnamqos.enteties.LogItem;
+import com.example.refactoringwnamqos.enteties.modelJson.jMeasurement.jSendMeasurement.FSendMeasurement;
 import com.example.refactoringwnamqos.intefaces.AllInterface;
 import com.example.refactoringwnamqos.intefaces.IMainActivity;
+import com.example.refactoringwnamqos.intefaces.ISendMeasureCallBack;
 import com.example.refactoringwnamqos.logs.LogAdapter;
 import com.example.refactoringwnamqos.logs.WorkWithLog;
+import com.example.refactoringwnamqos.measurments.ConnectivityHelper;
 import com.example.refactoringwnamqos.services.GeoLocationListener;
 import com.example.refactoringwnamqos.services.WorkService;
 
@@ -33,12 +36,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity implements IMainActivity{
+public class MainActivity extends AppCompatActivity implements IMainActivity {
 
     private RecyclerView recyclerView;
     private LogAdapter adapter;
     private List<LogItem> recLogItems = new ArrayList<>();
-
+    public final boolean WIFI = false;
     WorkWithLog workWithLog;
     private static final String TAG = "MainActivity";
     Button button;
@@ -51,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         InfoAboutMe.context = getApplicationContext();
+        List<Integer> test = new ArrayList <>();
         button = findViewById(R.id.btnDoWork);
         writingLogs();
         recyclerView = findViewById(R.id.recycler_view);
@@ -62,11 +66,6 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        if(WorkService.isSeviceStart) {
-            button.setText("Завершить работу");
-        }else{
-            button.setText("Запустить работу");
-        }
         button = findViewById(R.id.btnDoWork);
         isStoragePermissionGranted();
 
@@ -78,20 +77,27 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
 
     public void startService() {
         if(WorkService.isSeviceStart) {
-//            button.setText("Запустить работу");
-            WorkService.isSeviceStart = false;
-            getApplication().stopService(new Intent(getApplicationContext(), WorkService.class));
-            if(AllInterface.iScheduleMeasurement != null) {
-                AllInterface.iScheduleMeasurement.stopSchedule();
-            }
+           setFinish();
         }
         else {
-//            button.setText("Завершить работу");
-            WorkService.isSeviceStart = true;
-            Intent serviceIntent = new Intent(this, WorkService.class);
-            ContextCompat.startForegroundService(this, serviceIntent);
+           setStart();
         }
 
+    }
+
+    private void setStart(){
+        button.setText("Завершить работу");
+        WorkService.isSeviceStart = true;
+        Intent serviceIntent = new Intent(this, WorkService.class);
+        ContextCompat.startForegroundService(this, serviceIntent);
+    }
+    private void setFinish(){
+        button.setText("Запустить работу");
+        WorkService.isSeviceStart = false;
+        getApplication().stopService(new Intent(getApplicationContext(), WorkService.class));
+        if(AllInterface.iScheduleMeasurement != null) {
+            AllInterface.iScheduleMeasurement.stopSchedule();
+        }
     }
 
     private void initRecyclerView(){
@@ -161,5 +167,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivity{
             return true;
         }
     }
+
+
 
 }
