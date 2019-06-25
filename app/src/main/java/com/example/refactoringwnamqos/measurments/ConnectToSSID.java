@@ -100,10 +100,10 @@ public class ConnectToSSID {
     class MyTimerTaskWDT extends TimerTask {
         @Override
         public void run() {
-//            InfoAboutMe.context.unregisterReceiver(wifiReceiverCon);
-//            iWifiConnectCallBack.wifiConnectCallBack(false);
-//            Date date = new Date();
-//            AllInterface.iLog.addToLog(new LogItem("ConnectToSSID->MyTimerTaskWDT","run()",  String.valueOf(date)));
+            InfoAboutMe.context.unregisterReceiver(wifiReceiverCon);
+            iWifiConnectCallBack.wifiConnectCallBack(false);
+            Date date = new Date();
+            AllInterface.iLog.addToLog(new LogItem("ConnectToSSID->MyTimerTaskWDT","run()",  String.valueOf(date)));
         }
     }
 

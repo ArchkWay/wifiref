@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:installLocation="internalOnly"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.refactoringwnamqos">
 
@@ -46,8 +47,10 @@
 
         <receiver android:name=".services.StartBroadReceiv">
             <intent-filter>
+                <action android:name="android.intent.action.ACTION_BOOT_COMPLETED" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
     </application>

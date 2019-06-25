@@ -128,7 +128,7 @@ public class LoadListSettings implements IWSClient, ILoadTaskCompleted {
         wifi.init();
         wifi.enableWifi();
         wifi.removeAllNetwork();
-        wifi.disableWifi();
+//        wifi.disableWifi();
         goToSchedule(sec);
     }
 

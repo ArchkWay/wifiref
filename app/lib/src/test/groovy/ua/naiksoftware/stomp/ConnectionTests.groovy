@@ -27,6 +27,6 @@ class ConnectionTests extends Configuration {
         })
 
         cleanup:
-        client.disconnect()
+        client.disconnectStomp()
     }
 }

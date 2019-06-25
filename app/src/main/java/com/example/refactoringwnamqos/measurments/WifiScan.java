@@ -90,9 +90,9 @@ public class WifiScan{
         @Override
         public void run() {
             Date date = new Date();
-            AllInterface.iLog.addToLog(new LogItem("WifiScan -> MyTimerTaskWDT", "run()", String.valueOf(date)));
-            InfoAboutMe.context.unregisterReceiver(wifiReceiver);
-            iWifiScanCallBack.wifiScanCallBack(null, 1);
+//            AllInterface.iLog.addToLog(new LogItem("WifiScan -> MyTimerTaskWDT", "run()", String.valueOf(date)));
+//            InfoAboutMe.context.unregisterReceiver(wifiReceiver);
+//            iWifiScanCallBack.wifiScanCallBack(null, 1);
         }
     }
 

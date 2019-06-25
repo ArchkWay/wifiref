@@ -125,7 +125,7 @@ public class StompClient {
 
                         case CLOSED:
                             Log.d(TAG, "Socket closed");
-                            disconnect();
+                            disconnectStomp();
                             break;
 
                         case ERROR:
@@ -207,7 +207,7 @@ public class StompClient {
     }
 
     @SuppressLint("CheckResult")
-    public void disconnect() {
+    public void disconnectStomp() {
         disconnectCompletable().subscribe(() -> {
         }, e -> Log.e(TAG, "Disconnect error", e));
     }

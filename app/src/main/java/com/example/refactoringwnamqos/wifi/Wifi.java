@@ -60,7 +60,7 @@ public class Wifi implements IWifi {
             e.printStackTrace();
         }
         mac = getMacAddr();
-        disableWifi();
+//        disableWifi();
         InfoAboutMe.WifiMac1 = mac;
     }
     private void sentIntentToStart() {
@@ -147,7 +147,7 @@ public class Wifi implements IWifi {
             wifiManager.removeNetwork(list.get(t).networkId);
             wifiManager.saveConfiguration();
             }
-        wifiManager.disconnect();
+//        wifiManager.disconnect();
     }
 
     //---------------------------------------------------------------------------------

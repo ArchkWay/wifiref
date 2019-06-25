@@ -1,9 +1,11 @@
 package com.example.refactoringwnamqos;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
@@ -18,13 +20,18 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.refactoringwnamqos.enteties.LogItem;
+import com.example.refactoringwnamqos.enteties.jGetTask.FGetTaskCommands;
 import com.example.refactoringwnamqos.enteties.modelJson.jMeasurement.jSendMeasurement.FSendMeasurement;
+import com.example.refactoringwnamqos.enteties.modelJson.jMeasurement.jSendMeasurement.TCOMMAN_X_ID;
 import com.example.refactoringwnamqos.intefaces.AllInterface;
 import com.example.refactoringwnamqos.intefaces.IMainActivity;
 import com.example.refactoringwnamqos.intefaces.ISendMeasureCallBack;
+import com.example.refactoringwnamqos.intefaces.IWebAuthorCallBack;
 import com.example.refactoringwnamqos.logs.LogAdapter;
 import com.example.refactoringwnamqos.logs.WorkWithLog;
 import com.example.refactoringwnamqos.measurments.ConnectivityHelper;
+import com.example.refactoringwnamqos.measurments.webauthorizition.WebAuthor;
+import com.example.refactoringwnamqos.measurments.webauthorizition.WebAuthorObj;
 import com.example.refactoringwnamqos.services.GeoLocationListener;
 import com.example.refactoringwnamqos.services.WorkService;
 
@@ -36,7 +43,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity implements IMainActivity {
+public class MainActivity extends AppCompatActivity implements IMainActivity
+        , IWebAuthorCallBack
+{
 
     private RecyclerView recyclerView;
     private LogAdapter adapter;
@@ -64,6 +73,8 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
         adapter = new LogAdapter(recLogItems);
         recyclerView.setAdapter(adapter);
 
+//        testWebAuth();
+        
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         button = findViewById(R.id.btnDoWork);
@@ -168,6 +179,23 @@ public class MainActivity extends AppCompatActivity implements IMainActivity {
         }
     }
 
+    private void testWebAuth(){
+        WebAuthorObj webAuthorObj = new WebAuthorObj();
+        webAuthorObj.setTel("+79094303146");
+        webAuthorObj.setUrl_1("https://ya.ru");
+        webAuthorObj.setUrl_2("https://ya.ru");
+        webAuthorObj.setUrl_3("https://ya.ru");
+
+        WebAuthor webAuthor = new WebAuthor(webAuthorObj, this, 1);
+        WifiManager wifiManager = (WifiManager) InfoAboutMe.context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        wifiManager.setWifiEnabled(true);
+        wifiManager.enableNetwork(0, true);
+        webAuthor.step1();
+    }
 
 
+    @Override
+    public void webAuthorCallback(int state) {
+        Log.d("sd", String.valueOf(state)) ;
+    }
 }

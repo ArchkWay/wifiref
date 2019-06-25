@@ -122,6 +122,15 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
                     AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands, "Скачивание файла", String.valueOf(date)));
                     downloadFile();
                     break;
+                case "GET_SMS":
+
+                    break;
+                case "CLEAR_SMS":
+
+                    break;
+                case "RESET_WEBAUTH":
+
+                    break;
                 default:
                     date = new Date();
                     AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands, "Команда не поддерживается", String.valueOf(date)));
@@ -132,7 +141,7 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
             mMeanObject.setEnd(getTime());
             date = new Date();
             AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands, "Измерение завершено", String.valueOf(date)));
-            AllInterface.iWifi.disableWifi();
+//            AllInterface.iWifi.disableWifi();
 
             if (timer != null) {
                 timer.cancel();
