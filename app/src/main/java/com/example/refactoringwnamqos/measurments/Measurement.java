@@ -1,8 +1,14 @@
 package com.example.refactoringwnamqos.measurments;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.refactoringwnamqos.InfoAboutMe;
+import com.example.refactoringwnamqos.MainActivity;
 import com.example.refactoringwnamqos.intefaces.AllInterface;
 import com.example.refactoringwnamqos.intefaces.IReconnectStomp;
 import com.example.refactoringwnamqos.businessLogic.JobToMerge;
@@ -26,7 +32,6 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-
 public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWaitTime, IWebAuthorCallBack, IReconnectStomp, IDownloader {
 
     private JobToMerge job;
@@ -35,7 +40,7 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
     private List <TCOMMAN_X_ID> tcomman_x_ids;
     private int mCountCommands;
     private List <FGetTaskCommands> mCommands;
-    private int mCurrentConutCommands = 0;
+    public static int mCurrentConutCommands = 0;
     private Timer timer;
     private TimerTask timerTask;
     private boolean connectWifi;
@@ -106,6 +111,7 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
                     date = new Date();
                     AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands, "Ожидание", String.valueOf(date)));
                     waitTime();
+
                     break;
                 case "WEBAUTH":
                     date = new Date();
@@ -116,6 +122,7 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
                     date = new Date();
                     AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands, "Тестирование интеренета", String.valueOf(date)));
                     testInternet();
+                    deleteSMS(InfoAboutMe.context);
                     break;
                 case "GET_FILE":
                     date = new Date();
@@ -123,10 +130,16 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
                     downloadFile();
                     break;
                 case "GET_SMS":
-
+                    MainActivity.SmsReceiver smsReceiver = new MainActivity.SmsReceiver();
+                    smsReceiver.execute();
+                    date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands, "Получена смс", String.valueOf(date)));
                     break;
                 case "CLEAR_SMS":
 
+                    deleteSMS(InfoAboutMe.context);
+                    date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands, "Все смс удалены", String.valueOf(date)));
                     break;
                 case "RESET_WEBAUTH":
 
@@ -265,10 +278,11 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
             } else wifiInfoObject = wiFi.getWifiInfo();
 
         } catch (Exception e) {
-            try{
-            wifiInfoObject = wiFi.getWifiInfo();
+            try {
+                wifiInfoObject = wiFi.getWifiInfo();
+            } catch (Exception noInf) {
+                wifiInfoObject = AllInterface.iWifi.getWifiInfo();
             }
-            catch (Exception noInf){wifiInfoObject = AllInterface.iWifi.getWifiInfo();}
         }
         tcommanXId.setOutput(wifiInfoObject);
         tcommanXId.setEnd(getTime());
@@ -407,6 +421,27 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
         tcomman_x_id.setEnd(getTime());
         mCurrentConutCommands++;
         start();
+    }
 
+    public void deleteSMS(Context context) {
+        try {
+            Uri uriSms = Uri.parse("content://sms/inbox");
+            Cursor c = context.getContentResolver().query(uriSms, new String[]{"_id"}, null, null, null);
+            if (c != null && c.moveToFirst()) {
+                do {
+                    long id = c.getLong(0);
+
+                        context.getContentResolver().delete(
+                                Uri.parse("content://sms/" + id), null, null);
+                        Log.e("Message:", "Message is Deleted successfully");
+                } while (c.moveToNext());
+            }
+
+            if (c != null) {
+                c.close();
+            }
+        } catch (Exception e) {
+            Log.e("Exception", e.toString());
+        }
     }
 }

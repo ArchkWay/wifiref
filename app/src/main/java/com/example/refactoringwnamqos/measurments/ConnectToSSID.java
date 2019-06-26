@@ -81,8 +81,6 @@ public class ConnectToSSID {
                         iWifiConnectCallBack.wifiConnectCallBack(true);
                     }
                     catch (Exception e){}
-
-
                 }
             }
         }

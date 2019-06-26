@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.example.refactoringwnamqos.InfoAboutMe;
 import com.example.refactoringwnamqos.MainActivity;
 import com.example.refactoringwnamqos.enteties.LogItem;
 import com.example.refactoringwnamqos.logs.WorkWithLog;
@@ -45,6 +47,11 @@ public class StartBroadReceiv extends BroadcastReceiver {
                         msgs[i] = SmsMessage.createFromPdu((byte[])pdus[i]);
                         msg_from = msgs[i].getOriginatingAddress();
                         String msgBody = msgs[i].getMessageBody();
+//                        if(msg_from.equals("WNAM")){
+                            InfoAboutMe.SMS = msgBody;
+//                        }
+                        Toast.makeText(InfoAboutMe.context, msg_from, Toast.LENGTH_LONG).show();
+                        Toast.makeText(InfoAboutMe.context, InfoAboutMe.SMS.substring(4,8), Toast.LENGTH_LONG).show();
                     }
                 }catch(Exception e){
                             Log.d("Exception caught",e.getMessage());

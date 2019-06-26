@@ -16,6 +16,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import ua.naiksoftware.stomp.Stomp;
+
 import ua.naiksoftware.stomp.StompClient;
 import ua.naiksoftware.stomp.dto.StompHeader;
 
@@ -68,13 +69,12 @@ public class WSClient implements ISWClientConnect {
             switch (lifecycleEvent.getType()) {
                 case OPENED:
                     AllInterface.iLog.addToLog(new LogItem("WSClient", "connectStomp() Подключение удалось", String.valueOf(date)));
-                    if (iwsClient != null) {
-                        iwsClient.iwsClientCallBack(mStompClient, 0);
-                    }
+                    if (iwsClient != null) iwsClient.iwsClientCallBack(mStompClient, 0);
                     break;
-                case ERROR://InfoAboutMe.stompClient = null;
+                case ERROR:
+                    InfoAboutMe.stompClient = null;
                     AllInterface.iLog.addToLog(new LogItem("WSClient", "connectStomp() Ошибка подключения", String.valueOf(date)));
-//                            if(iwsClient != null)//                                iwsClient.iwsClientCallBack(null, 1);
+                    if (iwsClient != null) iwsClient.iwsClientCallBack(null, 1);
                     break;
                 case CLOSED:
                     InfoAboutMe.stompClient = null;
@@ -83,9 +83,10 @@ public class WSClient implements ISWClientConnect {
                     if (iwsClient != null) iwsClient.iwsClientCallBack(null, 2);
                     break;
                 case FAILED_SERVER_HEARTBEAT:
-                    //InfoAboutMe.stompClient = null;
+                    InfoAboutMe.stompClient = null;
                     AllInterface.iLog.addToLog(new LogItem("WSClient", "connectStomp() Ошибка пинга", String.valueOf(date)));
-//                            if(iwsClient != null)//                                iwsClient.iwsClientCallBack(null, 3);
+                    if (iwsClient != null)//
+                        iwsClient.iwsClientCallBack(null, 3);
                     break;
             }
         });

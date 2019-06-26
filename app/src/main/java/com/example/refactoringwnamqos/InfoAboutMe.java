@@ -10,6 +10,7 @@ public class InfoAboutMe {
     public static String WifiMac2;
     public static String phone;
     public static String version = "1.7";
+    public static String SMS;
     public static long startTime = 0;
     public static Context context;
     public static StompClient stompClient;
