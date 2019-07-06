@@ -3,12 +3,11 @@ package com.example.refactoringwnamqos.measurments;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Handler;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.refactoringwnamqos.InfoAboutMe;
 import com.example.refactoringwnamqos.MainActivity;
+import com.example.refactoringwnamqos.enteties.MeanObject;
 import com.example.refactoringwnamqos.intefaces.AllInterface;
 import com.example.refactoringwnamqos.intefaces.IReconnectStomp;
 import com.example.refactoringwnamqos.businessLogic.JobToMerge;
@@ -27,6 +26,7 @@ import com.example.refactoringwnamqos.intefaces.IWifiScanCallBack;
 import com.example.refactoringwnamqos.wifi.Wifi;
 import com.example.refactoringwnamqos.wifi.WifiItem;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Timer;
@@ -51,6 +51,7 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
         this.job = job;
         AllInterface.iswClientConnect.shutdown();
         AllInterface.iReconnectStomp = this;
+
         preparation();
     }
 
@@ -63,7 +64,7 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
     }
 
     public void preparation() {
-
+        mCurrentConutCommands = 0;
         RegOnService.isConnectAfterMeasumerent = true;
         for (int q = 0; q < job.getListTasks().size(); q++) {
             mTask = job.getListTasks().get(q);
@@ -111,7 +112,6 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
                     date = new Date();
                     AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands, "Ожидание", String.valueOf(date)));
                     waitTime();
-
                     break;
                 case "WEBAUTH":
                     date = new Date();
@@ -119,10 +119,11 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
                     webAuth();
                     break;
                 case "TEST_INTERNET":
+
                     date = new Date();
                     AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands, "Тестирование интеренета", String.valueOf(date)));
                     testInternet();
-                    deleteSMS(InfoAboutMe.context);
+//                    deleteSMS(InfoAboutMe.context);
                     break;
                 case "GET_FILE":
                     date = new Date();
@@ -130,18 +131,18 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
                     downloadFile();
                     break;
                 case "GET_SMS":
-                    MainActivity.SmsReceiver smsReceiver = new MainActivity.SmsReceiver();
-                    smsReceiver.execute();
+                    getSms();
                     date = new Date();
                     AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands, "Получена смс", String.valueOf(date)));
                     break;
                 case "CLEAR_SMS":
-
                     deleteSMS(InfoAboutMe.context);
                     date = new Date();
                     AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands, "Все смс удалены", String.valueOf(date)));
                     break;
                 case "RESET_WEBAUTH":
+                    date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands, "Все смс удалены", String.valueOf(date)));
 
                     break;
                 default:
@@ -155,7 +156,6 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
             date = new Date();
             AllInterface.iLog.addToLog(new LogItem("Измерения " + mCurrentConutCommands, "Измерение завершено", String.valueOf(date)));
 //            AllInterface.iWifi.disableWifi();
-
             if (timer != null) {
                 timer.cancel();
                 timer = null;
@@ -174,6 +174,7 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
             timer.schedule(timerTask, 5_000);
             date = new Date();
             AllInterface.iLog.addToLog(new LogItem("Measurement -> Timer", "Старт таймера", String.valueOf(date)));
+            AllInterface.iReconnectStomp.success();
 
         }
     }
@@ -203,6 +204,18 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
         mMeanObject.getResults().set(mCurrentConutCommands, tcommanXId);
         mCurrentConutCommands++;
         start();
+    }
+
+    //------------------------------------------------------------------------------------
+    private void getSms() {
+        TCOMMAN_X_ID tcommanXId = mMeanObject.getResults().get(mCurrentConutCommands);
+        tcommanXId.setBegin(getTime());
+        MainActivity.SmsReceiver smsReceiver = new MainActivity.SmsReceiver();
+        smsReceiver.execute();
+        tcommanXId.setOutput("OK");
+        tcommanXId.setEnd(getTime());
+        tcommanXId.setStatus(true);
+        mMeanObject.getResults().set(mCurrentConutCommands, tcommanXId);
     }
 
     //------------------------------------------------------------------------------------
@@ -253,6 +266,7 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
         waitTime.start(seconds);
         tcommanXId.setStatus(true);
         mMeanObject.getResults().set(mCurrentConutCommands, tcommanXId);
+        Log.d(TAG, "WAIT - получен коллбек");
     }
 
     @Override
@@ -315,6 +329,8 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
         new WifiScan().scanWifi(this, timeout);
         tcommanXId.setStatus(true);
         tcomman_x_ids.set(mCurrentConutCommands, tcommanXId);
+        Log.d(TAG, "SCAN_WIFI - получен коллбек, код - " + mCurrentConutCommands);
+
     }
 
     @Override
@@ -326,7 +342,9 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
             tcommanXId.setOutput("TIMEOUT");
         } else {
             tcommanXId.setOutput(wifiItems);
+            tcommanXId.setStatus(true);
         }
+        tcomman_x_ids.set(mCurrentConutCommands, tcommanXId);
         mCurrentConutCommands++;
         start();
     }
@@ -377,7 +395,6 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
 
     //----------------------------------------------------
     private void downloadFile() {
-
         FGetTaskCommands command = mCommands.get(mCurrentConutCommands);
         TCOMMAN_X_ID tcommanXId = mMeanObject.getResults().get(mCurrentConutCommands);
         tcommanXId.setBegin(getTime());
@@ -386,7 +403,6 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
         if (ConnectivityHelper.isConnectedToNetwork(InfoAboutMe.context)) {
             Downloader downloader = new Downloader(this, timeout, tcommanXId);
             downloader.start(url);
-//            downloader.deleteFile();
 
         } else {
             tcommanXId.setOutput("ERROR");
@@ -404,13 +420,17 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
         if (state == 0) {
             tcomman_x_id.setOutput("OK");
             tcomman_x_id.setStatus(true);
-            mMeanObject.getResults().set(mCurrentConutCommands, tcomman_x_id);
+            try {
+                mMeanObject.getResults().set(mCurrentConutCommands, tcomman_x_id);
+            } catch (Exception e) {
+                preparation();
+            }
         }
 
         if (state == 1) {
             tcomman_x_id.setOutput("ERROR");
             tcomman_x_id.setStatus(false);
-//            mMeanObject.getResults().set(mCurrentConutCommands, tcomman_x_id);
+            mMeanObject.getResults().set(mCurrentConutCommands, tcomman_x_id);
         }
         if (state == 2) {
             tcomman_x_id.setOutput("TIMEOUT");
@@ -424,24 +444,17 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
     }
 
     public void deleteSMS(Context context) {
-        try {
-            Uri uriSms = Uri.parse("content://sms/inbox");
-            Cursor c = context.getContentResolver().query(uriSms, new String[]{"_id"}, null, null, null);
-            if (c != null && c.moveToFirst()) {
-                do {
-                    long id = c.getLong(0);
-
-                        context.getContentResolver().delete(
-                                Uri.parse("content://sms/" + id), null, null);
-                        Log.e("Message:", "Message is Deleted successfully");
-                } while (c.moveToNext());
+        Uri inboxUri = Uri.parse("content://sms/inbox");
+        int count = 0;
+        Cursor c = context.getContentResolver().query(inboxUri, null, null, null, null);
+        while (c.moveToNext()) {
+            try {
+                // Delete the SMS
+                String pid = c.getString(0); // Get id;
+                String uri = "content://sms/" + pid;
+                count = context.getContentResolver().delete(Uri.parse(uri), null, null);
+            } catch (Exception e) {
             }
-
-            if (c != null) {
-                c.close();
-            }
-        } catch (Exception e) {
-            Log.e("Exception", e.toString());
         }
     }
 }

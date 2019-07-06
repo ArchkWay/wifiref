@@ -1,5 +1,6 @@
 package com.example.refactoringwnamqos.measurments;
 
+import com.example.refactoringwnamqos.enteties.MeanObject;
 import com.example.refactoringwnamqos.intefaces.AllInterface;
 import com.example.refactoringwnamqos.businessLogic.JobToMerge;
 import com.example.refactoringwnamqos.enteties.LogItem;

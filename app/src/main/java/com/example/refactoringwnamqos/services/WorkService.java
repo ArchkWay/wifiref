@@ -30,16 +30,7 @@ public class WorkService extends Service  {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-//        new Thread(() -> {
-//            while (endless) {
                 starter();
-//                try {
-//                    TimeUnit.SECONDS.sleep(120);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }).start();
         return START_REDELIVER_INTENT;
     }
 
@@ -48,25 +39,8 @@ public class WorkService extends Service  {
         Date date = new Date();
         InfoAboutMe.startTime = System.currentTimeMillis();
 
-//        Intent notificationIntent = new Intent(this, MainActivity.class);
-//        PendingIntent pendingIntent = PendingIntent.getActivity(this,
-//                0, notificationIntent, 0);
-//
-//        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-//                .setContentTitle("Exapmple Service")
-//                .setSmallIcon(R.drawable.ic_android)
-//                .setContentIntent(pendingIntent)
-//                .build();
-//
-//        startForeground(1, notification);
-
         AllInterface.iLog.addToLog(new LogItem("WorkService", "onStartCommand -> Запуск сервиса", String.valueOf(date)));
-        WorkWithLog workWithLog = WorkWithLog.getInstance(getApplicationContext());
         InfoAboutMe.context = getApplicationContext();
-//
-//        Intent i= new Intent(this, MainActivity.class);
-//        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        this.startActivity(i);
 
         LoadListSettings loadListSettings = new LoadListSettings();
         loadListSettings.start(1);

@@ -40,7 +40,7 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.MyViewHodler>{
         LogItem logItem = logItems.get(i);
         myViewHodler.textCaption.setText(logItem.getmCaption());
         @SuppressLint("SimpleDateFormat")
-        SimpleDateFormat formatForDateNow = new SimpleDateFormat("E yyyy.MM.dd 'время' hh:mm:ss");
+        SimpleDateFormat formatForDateNow = new SimpleDateFormat("E yyyy.MM.dd 'время' HH:mm:ss");
         Date parsingDate = new Date(Long.parseLong(logItem.getmDate())*1000);
         String date = formatForDateNow.format(parsingDate);
         myViewHodler.textData.setText(logItem.getmInfo() + " в " + date);

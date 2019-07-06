@@ -4,11 +4,14 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.location.Location;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
+import android.provider.Telephony;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -67,9 +70,10 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, IW
         recLogItems = AllInterface.iLog.getLogList();
         adapter = new LogAdapter(recLogItems);
         recyclerView.setAdapter(adapter);
-
-//        RPS_PermissionActivity rps_permissionActivity = new RPS_PermissionActivity();
-//        rps_permissionActivity.getReadSMSPermission(this);
+        Telephony.Sms.getDefaultSmsPackage(this);
+        String defaultSmsApp = Telephony.Sms.getDefaultSmsPackage(this);
+        Toast.makeText(this, defaultSmsApp, Toast.LENGTH_SHORT).show();
+        Log.d("___default",defaultSmsApp);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -225,5 +229,21 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, IW
 
             return null;
         }
+    }
+    public void deleteSMS(Context context) {
+        Uri inboxUri = Uri.parse("content://sms/inbox");
+        Cursor c = context.getContentResolver().query(inboxUri , null, null, null, null);
+        while (c.moveToNext()) {
+            try {
+                // Delete the SMS
+
+                String pid = c.getString(0); // Get id;
+                String uri = "content://sms/" + pid;
+                context.getContentResolver().delete(Uri.parse(uri),
+                        null, null);
+            } catch (Exception e) {
+            }
+        }
+            c.close();
     }
 }

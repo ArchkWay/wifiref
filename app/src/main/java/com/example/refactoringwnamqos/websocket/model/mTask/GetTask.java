@@ -33,20 +33,19 @@ public class GetTask {
     }
 
     public void subscribe() {
-
         // Receive greetings
         Disposable dispTopic = wsClient.mStompClient.topic("/user/queue/task/get")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(topicMessage -> {
                     FGetTask fGetTask = mGson.fromJson(topicMessage.getPayload(), FGetTask.class);
-                    iGetTaskCallBack.taskCallBack(0,fGetTask);
+                    iGetTaskCallBack.fuckenCallBack(0,fGetTask);
                     Date date = new Date();
                     AllInterface.iLog.addToLog(new LogItem("GetTask -> subscribe()", topicMessage.getPayload(),  String.valueOf(date)));
                 }, throwable -> {
                     Date date = new Date();
                     AllInterface.iLog.addToLog(new LogItem("GetTask -> subscribe()", "Error on subscribe topic",  String.valueOf(date)));
-                    iGetTaskCallBack.taskCallBack(1, null);
+                    iGetTaskCallBack.fuckenCallBack(1, null);
                 });
 
         wsClient.compositeDisposable.add(dispTopic);

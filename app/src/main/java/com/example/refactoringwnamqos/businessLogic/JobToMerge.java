@@ -2,7 +2,7 @@ package com.example.refactoringwnamqos.businessLogic;
 
 import com.example.refactoringwnamqos.enteties.jGetAll.FGetAllData;
 import com.example.refactoringwnamqos.enteties.jGetTask.FGetTaskData;
-import com.example.refactoringwnamqos.measurments.MeanObject;
+import com.example.refactoringwnamqos.enteties.MeanObject;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.example.refactoringwnamqos.measurments;
+package com.example.refactoringwnamqos.enteties;
 
 import com.example.refactoringwnamqos.enteties.modelJson.jMeasurement.jSendMeasurement.TCOMMAN_X_ID;
 

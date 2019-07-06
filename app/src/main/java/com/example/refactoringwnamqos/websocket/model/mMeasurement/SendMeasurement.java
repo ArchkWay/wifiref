@@ -7,7 +7,7 @@ import com.example.refactoringwnamqos.intefaces.AllInterface;
 import com.example.refactoringwnamqos.businessLogic.RegOnService;
 import com.example.refactoringwnamqos.enteties.LogItem;
 import com.example.refactoringwnamqos.intefaces.ISendMeasurement;
-import com.example.refactoringwnamqos.measurments.MeanObject;
+import com.example.refactoringwnamqos.enteties.MeanObject;
 import com.example.refactoringwnamqos.enteties.modelJson.jMeasurement.jSendMeasurement.FSendMeasurement;
 import com.example.refactoringwnamqos.websocket.base.WSClient;
 import com.example.refactoringwnamqos.intefaces.ILoadMeasurCallback;

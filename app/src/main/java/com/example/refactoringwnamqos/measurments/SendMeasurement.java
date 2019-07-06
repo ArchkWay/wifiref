@@ -2,6 +2,7 @@ package com.example.refactoringwnamqos.measurments;
 
 import android.util.Log;
 
+import com.example.refactoringwnamqos.enteties.MeanObject;
 import com.example.refactoringwnamqos.intefaces.AllInterface;
 import com.example.refactoringwnamqos.businessLogic.RegOnService;
 import com.example.refactoringwnamqos.enteties.LogItem;

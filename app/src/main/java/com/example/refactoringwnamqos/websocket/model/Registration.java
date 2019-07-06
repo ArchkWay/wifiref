@@ -9,6 +9,7 @@ import com.example.refactoringwnamqos.enteties.jRegister.FRegister;
 import com.example.refactoringwnamqos.intefaces.IRegCallBack;
 import com.example.refactoringwnamqos.websocket.base.WSClient;
 import com.example.refactoringwnamqos.enteties.modelJson.jRegister.TRegister;
+import com.example.refactoringwnamqos.websocket.model.mGetAll.GetAll;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
