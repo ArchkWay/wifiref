@@ -5,12 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.location.Location;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Handler;
 import android.provider.Telephony;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -18,24 +16,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.refactoringwnamqos.enteties.LogItem;
-import com.example.refactoringwnamqos.enteties.jGetTask.FGetTaskCommands;
-import com.example.refactoringwnamqos.enteties.modelJson.jMeasurement.jSendMeasurement.FSendMeasurement;
-import com.example.refactoringwnamqos.enteties.modelJson.jMeasurement.jSendMeasurement.TCOMMAN_X_ID;
 import com.example.refactoringwnamqos.intefaces.AllInterface;
-import com.example.refactoringwnamqos.intefaces.IDownloader;
 import com.example.refactoringwnamqos.intefaces.IMainActivity;
-import com.example.refactoringwnamqos.intefaces.ISendMeasureCallBack;
 import com.example.refactoringwnamqos.intefaces.IWebAuthorCallBack;
 import com.example.refactoringwnamqos.logs.LogAdapter;
 import com.example.refactoringwnamqos.logs.WorkWithLog;
 import com.example.refactoringwnamqos.measurments.webauthorizition.WebAuthor;
-import com.example.refactoringwnamqos.measurments.webauthorizition.WebAuthorObj;
+import com.example.refactoringwnamqos.enteties.WebAuthorObj;
 import com.example.refactoringwnamqos.phone.RPS_PermissionActivity;
 import com.example.refactoringwnamqos.services.WorkService;
 
@@ -56,7 +52,6 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, IW
     WorkWithLog workWithLog;
     private static final String TAG = "MainActivity";
     Button button;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,12 +71,12 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, IW
         Log.d("___default",defaultSmsApp);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
+        testWebAuth();
         button = findViewById(R.id.btnDoWork);
         isStoragePermissionGranted();
 
         button.setOnClickListener(v -> startService());
-        startService();
+//        startService();
     }
 
 
@@ -180,16 +175,18 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, IW
     }
 
     private void testWebAuth() {
+
         WebAuthorObj webAuthorObj = new WebAuthorObj();
         webAuthorObj.setTel("+79094303146");
-        webAuthorObj.setUrl_1("https://ya.ru");
-        webAuthorObj.setUrl_2("https://ya.ru");
-        webAuthorObj.setUrl_3("https://ya.ru");
 
+        webAuthorObj.setUrl_1("http://www.ru");
+//        webAuthorObj.setUrl_1("https://ya.ru");
+        webAuthorObj.setUrl_2("https://www.ru");
+        webAuthorObj.setUrl_3("https://www.ru");
         WebAuthor webAuthor = new WebAuthor(webAuthorObj, this, 1);
         WifiManager wifiManager = (WifiManager) InfoAboutMe.context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        wifiManager.setWifiEnabled(true);
-        wifiManager.enableNetwork(0, true);
+//        wifiManager.setWifiEnabled(true);
+//        wifiManager.enableNetwork(0, true);
         webAuthor.step1();
     }
 

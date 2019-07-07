@@ -21,12 +21,11 @@ import com.example.refactoringwnamqos.enteties.modelJson.jMeasurement.jSendMeasu
 import com.example.refactoringwnamqos.intefaces.IWaitTime;
 import com.example.refactoringwnamqos.intefaces.IWebAuthorCallBack;
 import com.example.refactoringwnamqos.measurments.webauthorizition.WebAuthor;
-import com.example.refactoringwnamqos.measurments.webauthorizition.WebAuthorObj;
+import com.example.refactoringwnamqos.enteties.WebAuthorObj;
 import com.example.refactoringwnamqos.intefaces.IWifiScanCallBack;
 import com.example.refactoringwnamqos.wifi.Wifi;
 import com.example.refactoringwnamqos.wifi.WifiItem;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Timer;

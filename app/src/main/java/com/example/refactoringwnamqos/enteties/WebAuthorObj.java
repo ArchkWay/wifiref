@@ -1,4 +1,4 @@
-package com.example.refactoringwnamqos.measurments.webauthorizition;
+package com.example.refactoringwnamqos.enteties;
 
 public class WebAuthorObj {
     private String tel;
@@ -8,6 +8,15 @@ public class WebAuthorObj {
     private String code;
     private int timeOut;
     private int step;
+    StepTwoResponse stepTwoResponse;
+
+    public StepTwoResponse getStepTwoResponse() {
+        return stepTwoResponse;
+    }
+
+    public void setStepTwoResponse(StepTwoResponse stepTwoResponse) {
+        this.stepTwoResponse = stepTwoResponse;
+    }
 
     public String getTel() {
         return tel;
