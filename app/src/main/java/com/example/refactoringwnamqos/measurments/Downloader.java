@@ -36,7 +36,7 @@ public class Downloader {
     private TimerTask timerTaskWDT;
     TCOMMAN_X_ID tcomman_x_id;
     String url;
-
+    long fileSize;
     public Downloader(IDownloader iDownloader, int timeout, TCOMMAN_X_ID tcomman_x_id) {
         this.iDownloader = iDownloader;
         this.timeout = timeout;
@@ -61,56 +61,6 @@ public class Downloader {
             DownloaderBackground downloaderBackground = new DownloaderBackground(iDownloader, tcomman_x_id, timerWDT, timerTaskWDT, timeout);
             downloaderBackground.doInBackground();
     }
-//        if(timerWDT != null){
-//            timerWDT.cancel();
-//            timerWDT = null;
-//        }
-//
-//        timerWDT = new Timer();
-//        timerTaskWDT = new WDTimer();
-//        timerWDT.schedule(timerTaskWDT, timeout * 1_000);
-//
-//        IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
-//        InfoAboutMe.context.registerReceiver(new BroadcastReceiver() {
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//                long broadcastedDownloadID = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
-//
-//                if(broadcastedDownloadID == downloadId){
-//                    if(getDownLoadStatus() == DownloadManager.STATUS_SUCCESSFUL){
-//                        if (timerWDT != null) timerWDT.cancel();
-//                        iDownloader.downloadEvent(tcomman_x_id,0);
-//                        Date date = new Date();
-//                        AllInterface.iLog.addToLog(new LogItem("Downloader","Удачно",  String.valueOf(date)));
-//                        Toast.makeText(InfoAboutMe.context, "Download complete", Toast.LENGTH_SHORT).show();
-//                    } else{
-//                        Toast.makeText(InfoAboutMe.context, "Download not complete", Toast.LENGTH_SHORT).show();
-//                        Date date = new Date();
-//                        AllInterface.iLog.addToLog(new LogItem("Downloader","Не получилось",  String.valueOf(date)));
-//                        if(timerWDT != null) timerWDT.cancel();
-//                        iDownloader.downloadEvent(tcomman_x_id,1);
-//                    }
-//                }
-//            }
-//        }, filter);
-//
-//
-//        Uri uri = Uri.parse(url);
-//        hasPermissions();
-//        if (hasPermissions()) {
-//
-//            DownloadManager.Request request = new DownloadManager.Request(uri);
-//            request.setDestinationInExternalPublicDir("/menesured", "sss.jpg");
-//            DownloadManager downloadManager = (DownloadManager)InfoAboutMe.context.getSystemService(Context.DOWNLOAD_SERVICE);
-//            downloadId = downloadManager.enqueue(request);
-//
-//        } else {
-//            Intent intent = new Intent(InfoAboutMe.context, WF_permissions.class);
-//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//            InfoAboutMe.context.startActivity(intent);
-//            Date date = new Date();
-//            AllInterface.iLog.addToLog(new LogItem("Downloader","Нет пермишина для работы с памятью",  String.valueOf(date)));
-//        }
 
 
     private class DownloaderBackground extends AsyncTask <Void, Void, Void> {
@@ -180,7 +130,9 @@ public class Downloader {
                 Date date = new Date();
                 AllInterface.iLog.addToLog(new LogItem("Downloader", "Нет пермишина для работы с памятью", String.valueOf(date)));
             }
-
+            File file = new File(Environment.getExternalStorageDirectory() + "/menesured", "sss.jpg");
+            fileSize = file.length();
+            tcomman_x_id.setOutput(fileSize);
             deleteFile();
             return null;
         }
@@ -231,8 +183,7 @@ public class Downloader {
         }
 
         public void cancelDownload() {
-//            DownloadManager downloadManager = (DownloadManager) InfoAboutMe.context.getSystemService(Context.DOWNLOAD_SERVICE);
-//            downloadManager.remove(downloadId);
+            DownloadManager downloadManager = (DownloadManager) InfoAboutMe.context.getSystemService(Context.DOWNLOAD_SERVICE);
         }
     }
 

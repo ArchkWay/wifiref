@@ -1,24 +1,30 @@
 package com.example.refactoringwnamqos.services;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.WifiManager;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.example.refactoringwnamqos.InfoAboutMe;
 import com.example.refactoringwnamqos.businessLogic.LoadListSettings;
 import com.example.refactoringwnamqos.businessLogic.RegOnService;
 import com.example.refactoringwnamqos.enteties.LogItem;
+import com.example.refactoringwnamqos.enteties.WebAuthorObj;
 import com.example.refactoringwnamqos.intefaces.AllInterface;
 import com.example.refactoringwnamqos.intefaces.ISendMeasureCallBack;
+import com.example.refactoringwnamqos.intefaces.IWebAuthorCallBack;
 import com.example.refactoringwnamqos.logs.WorkWithLog;
 import com.example.refactoringwnamqos.measurments.ISendMeasurment;
+import com.example.refactoringwnamqos.measurments.webauthorizition.WebAuthor;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 
-public class WorkService extends Service  {
+public class WorkService extends Service implements IWebAuthorCallBack {
 
     public static boolean isSeviceStart = false;
     boolean endless = true;
@@ -47,7 +53,20 @@ public class WorkService extends Service  {
         RegOnService.isConnectAfterMeasumerent = false;
     }
 
+    private void testWebAuth() {
 
+        WebAuthorObj webAuthorObj = new WebAuthorObj();
+        webAuthorObj.setTel("79094303146");
+
+        webAuthorObj.setUrl_1("http://www.ru");
+        webAuthorObj.setUrl_2("http://wnam-srv1.alel.net/cp/mikrotik");
+        webAuthorObj.setUrl_3("http://wnam-srv1.alel.net/cp/sms");
+        WebAuthor webAuthor = new WebAuthor(webAuthorObj, this, 1);
+        WifiManager wifiManager = (WifiManager) InfoAboutMe.context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+//        wifiManager.setWifiEnabled(true);
+//        wifiManager.enableNetwork(0, true);
+        webAuthor.step1();
+    }
     @Override
     public void onDestroy() {
         if (AllInterface.iswClientConnect != null) AllInterface.iswClientConnect.shutdown();
@@ -67,4 +86,8 @@ public class WorkService extends Service  {
     }
 
 
+    @Override
+    public void webAuthorCallback(int state) {
+        Log.d("Вебавторизация фаза: ", String.valueOf(state));
+    }
 }

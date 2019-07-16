@@ -3,6 +3,7 @@ package com.example.refactoringwnamqos.measurments;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.net.wifi.WifiManager;
 import android.util.Log;
 
 import com.example.refactoringwnamqos.InfoAboutMe;
@@ -210,6 +211,7 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
         TCOMMAN_X_ID tcommanXId = mMeanObject.getResults().get(mCurrentConutCommands);
         tcommanXId.setBegin(getTime());
         MainActivity.SmsReceiver smsReceiver = new MainActivity.SmsReceiver();
+
         smsReceiver.execute();
         tcommanXId.setOutput("OK");
         tcommanXId.setEnd(getTime());
@@ -456,4 +458,6 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
             }
         }
     }
+
+
 }

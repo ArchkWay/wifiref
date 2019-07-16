@@ -16,7 +16,24 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         />
-
+    <EditText
+        android:id="@+id/etPhone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/enter_the_phone_number"
+        android:inputType="phone"
+        app:layout_constraintBottom_toTopOf="@+id/btnDoWork"
+        />
+    <TextView
+        android:id="@+id/tvPhone"
+        android:visibility="invisible"
+        android:text="79991112233"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:textSize="24sp"
+        app:layout_constraintTop_toTopOf="@id/etPhone"
+        app:layout_constraintBottom_toTopOf="@+id/btnDoWork"
+        />
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="0dp"

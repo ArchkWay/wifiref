@@ -143,12 +143,7 @@ public class RPS_PermissionActivity extends AppCompatActivity {
                 Manifest.permission.READ_PHONE_STATE)) {
             final String message = "Storage permission is needed to show files count";
             Snackbar.make(RPS_PermissionActivity.this.findViewById(R.id.activity_permission), message, Snackbar.LENGTH_LONG)
-                    .setAction("GRANT", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            requestPerms();
-                        }
-                    })
+                    .setAction("GRANT", v -> requestPerms())
                     .show();
         } else {
             requestPerms();

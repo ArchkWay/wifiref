@@ -9,6 +9,24 @@ public class WebAuthorObj {
     private int timeOut;
     private int step;
     StepTwoResponse stepTwoResponse;
+    StepThreeResponse stepThreeResponse;
+    StepFourResponse stepFourResponse;
+
+    public StepFourResponse getStepFourResponse() {
+        return stepFourResponse;
+    }
+
+    public void setStepFourResponse(StepFourResponse stepFourResponse) {
+        this.stepFourResponse = stepFourResponse;
+    }
+
+    public StepThreeResponse getStepThreeResponse() {
+        return stepThreeResponse;
+    }
+
+    public void setStepThreeResponse(StepThreeResponse stepThreeResponse) {
+        this.stepThreeResponse = stepThreeResponse;
+    }
 
     public StepTwoResponse getStepTwoResponse() {
         return stepTwoResponse;

@@ -1,5 +1,9 @@
 package com.example.refactoringwnamqos.measurments.webauthorizition;
 
+import android.net.Uri;
+import android.webkit.CookieSyncManager;
+
+import com.example.refactoringwnamqos.InfoAboutMe;
 import com.example.refactoringwnamqos.enteties.StepTwoResponse;
 import com.example.refactoringwnamqos.enteties.WebAuthorObj;
 import com.example.refactoringwnamqos.intefaces.AllInterface;
@@ -7,12 +11,15 @@ import com.example.refactoringwnamqos.enteties.LogItem;
 import com.example.refactoringwnamqos.intefaces.IWebCallBack1;
 
 import java.io.IOException;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
+import java.net.HttpCookie;
 import java.util.Date;
-import java.util.Map;
-
+import java.util.List;
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.HttpUrl;
+import okhttp3.FormBody;
+import okhttp3.JavaNetCookieJar;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -23,12 +30,15 @@ public class OkRequest {
 
     IWebCallBack1 iWebCallBack1;
     OkHttpClient okHttpClient;
+    CookieManager cookieManager;
     public OkRequest(IWebCallBack1 iWebCallBack1) {
         this.iWebCallBack1 = iWebCallBack1;
     }
 
     public void getRequest(String url) {
-        OkHttpClient okHttpClient = new OkHttpClient();
+        cookieManager = new CookieManager();
+        cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
+        OkHttpClient okHttpClient = new OkHttpClient.Builder().cookieJar(new JavaNetCookieJar(cookieManager)).build();
 
         Date date = new Date();
         AllInterface.iLog.addToLog(new LogItem("OkRequest", "getRequest() url - " + url, String.valueOf(date)));
@@ -38,7 +48,7 @@ public class OkRequest {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
-                iWebCallBack1.callResponseFromServer("OkRequest -> getRequest -> onResponse = Error");
+                iWebCallBack1.callResponseFromServer("OkRequest -> getRequest -> onResponse = Error", null);
                 Date date = new Date();
                 AllInterface.iLog.addToLog(new LogItem("OkRequest", "onFailure()", String.valueOf(date)));
             }
@@ -49,66 +59,94 @@ public class OkRequest {
                     String okResponse = response.body().string();
                     Date date = new Date();
                     AllInterface.iLog.addToLog(new LogItem("OkRequest", "onResponse = " + okResponse, String.valueOf(date)));
-                    iWebCallBack1.callResponseFromServer(okResponse);
+                    iWebCallBack1.callResponseFromServer(okResponse, null);
+
                 }
             }
         });
     }
 
-    public void postReqest(WebAuthorObj webAuthorObj) {
-        if(okHttpClient == null) okHttpClient= new OkHttpClient();
+    public void postRequest(WebAuthorObj webAuthorObj) {
+        if(cookieManager == null) cookieManager = new CookieManager();
+        cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
+        if (okHttpClient == null) okHttpClient = new OkHttpClient.Builder().cookieJar(new JavaNetCookieJar(cookieManager)).build();
         StepTwoResponse stepTwoResponse = webAuthorObj.getStepTwoResponse();
         Request request = null;
-        String requestBody = null;
+        String requestBody;
         MediaType mediaType;
-        String url = "";
-        switch (webAuthorObj.getStep()){
+        String url;
+        String cookie;
+        String smscode;
+        switch (webAuthorObj.getStep()) {
             case 1:
                 requestBody = "";
                 url = "";
                 Date date = new Date();
-                AllInterface.iLog.addToLog(new LogItem("OkRequest", "postReqest = " + url + " body " + requestBody, String.valueOf(date)));
+                AllInterface.iLog.addToLog(new LogItem("OkRequest", "postRequest = " + url + " body " + requestBody, String.valueOf(date)));
                 mediaType = MediaType.parse("application/x-www-form-urlencoded; charset=UTF-8");
                 RequestBody body = RequestBody.create(mediaType, requestBody);
                 request = new Request.Builder().url(url).post(body).build();
-            break;
+                break;
             case 2:
-                requestBody = "phone=" + webAuthorObj.getTel() + "&vualya_agree=-1";
-                url = webAuthorObj.getStepTwoResponse().getServerAddress();
-                HttpUrl.Builder httpBuider = HttpUrl.parse(url).newBuilder();
-                        httpBuider.addQueryParameter("dst",stepTwoResponse.getDst());
-                        httpBuider.addQueryParameter("username",stepTwoResponse.getUsername());
-                        httpBuider.addQueryParameter("password",stepTwoResponse.getPassword());
-                        httpBuider.addQueryParameter("mac",stepTwoResponse.getMac());
-                        httpBuider.addQueryParameter("ip",stepTwoResponse.getIp());
-                        httpBuider.addQueryParameter("server-name",stepTwoResponse.getServerName());
-                        httpBuider.addQueryParameter("server-address",stepTwoResponse.getServerAddress());
-                mediaType = MediaType.parse("application/x-www-form-urlencoded; charset=UTF-8");
-                body = RequestBody.create(mediaType, requestBody);
-                request = new Request.Builder().url(httpBuider.build()).build();
+                url = webAuthorObj.getUrl_2();
+                RequestBody formBody = new FormBody.Builder()
+                        .add("dst", stepTwoResponse.getDst())
+                        .add("username", stepTwoResponse.getUsername())
+                        .add("password", stepTwoResponse.getPassword())
+                        .add("mac", stepTwoResponse.getMac())
+                        .add("ip", stepTwoResponse.getIp())
+                        .add("server-name", stepTwoResponse.getServerName())
+                        .add("server-address", stepTwoResponse.getServerAddress()).build();
+                request = new Request.Builder().url(url).post(formBody).build();
+                CookieSyncManager.createInstance(InfoAboutMe.context);
+                CookieSyncManager.getInstance().startSync();
+
                 break;
             case 3:
-                requestBody = "code=" + webAuthorObj.getCode() + "&phone=" + webAuthorObj.getTel() + "&vualya_agree=-1";
+                formBody = new FormBody.Builder()
+                        .add("phone", webAuthorObj.getTel())
+                        .build();
                 url = webAuthorObj.getUrl_3();
+                cookie = "wnam="+webAuthorObj.getStepThreeResponse().getCookies().get(0).getValue();
+                request = new Request.Builder()
+                        .url(url)
+                        .post(formBody)
+                        .header("Cookie", cookie)
+                        .build();
+                break;
+            case 4:
+                url = webAuthorObj.getUrl_3();
+                cookie = "wnam="+webAuthorObj.getStepThreeResponse().getCookies().get(0).getValue();
+                smscode = webAuthorObj.getStepFourResponse().getSmscode().substring(4, 8);
+                formBody = new FormBody.Builder()
+                        .add("smscode", smscode)
+                        .build();
+                    request = new Request.Builder()
+                        .url(url)
+                        .post(formBody)
+                        .header("Cookie", cookie)
+                        .build();
                 break;
         }
-        
+
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
                 Date date = new Date();
-                AllInterface.iLog.addToLog(new LogItem("OkRequest", "postReqest -> okHttpClient.newCall -> onFailure()", String.valueOf(date)));
-                iWebCallBack1.callResponseFromServer("Error");
+                AllInterface.iLog.addToLog(new LogItem("OkRequest", "postRequest -> okHttpClient.newCall -> onFailure()", String.valueOf(date)));
+                iWebCallBack1.callResponseFromServer("Error", null);
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                List <HttpCookie> cookies = cookieManager.getCookieStore().getCookies();
                 String okResponse = response.body().string();
-                Date date = new Date();
-                AllInterface.iLog.addToLog(new LogItem("OkRequest", "postReqest -> okHttpClient.newCall -> onResponse() = " + okResponse, String.valueOf(date)));
-                iWebCallBack1.callResponseFromServer(okResponse);
+                    Date date = new Date();
+                AllInterface.iLog.addToLog(new LogItem("OkRequest", "postRequest -> okHttpClient.newCall -> onResponse() = " + okResponse, String.valueOf(date)));
+                iWebCallBack1.callResponseFromServer(okResponse, cookies);
             }
         });
     }
+
 }

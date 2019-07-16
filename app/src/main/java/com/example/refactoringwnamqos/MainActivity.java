@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Handler;
 import android.provider.Telephony;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -16,12 +17,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.refactoringwnamqos.enteties.LogItem;
@@ -42,6 +48,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import static com.example.refactoringwnamqos.measurments.Measurement.mCurrentConutCommands;
 
 public class MainActivity extends AppCompatActivity implements IMainActivity, IWebAuthorCallBack, RPS_PermissionActivity.RequestPermissionAction {
@@ -49,34 +56,72 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, IW
     private RecyclerView recyclerView;
     private LogAdapter adapter;
     private List <LogItem> recLogItems = new ArrayList <>();
+    EditText etPhone;
+    TextView tvPhone;
     WorkWithLog workWithLog;
     private static final String TAG = "MainActivity";
     Button button;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        InfoAboutMe.context = getApplicationContext();
         button = findViewById(R.id.btnDoWork);
+        etPhone = findViewById(R.id.etPhone);
+        tvPhone = findViewById(R.id.tvPhone);
+        InfoAboutMe.context = getApplicationContext();
+
         writingLogs();
-        recyclerView = findViewById(R.id.recycler_view);
-        initRecyclerView();
         workWithLog = WorkWithLog.getInstance(getApplicationContext());
         recLogItems = AllInterface.iLog.getLogList();
-        adapter = new LogAdapter(recLogItems);
-        recyclerView.setAdapter(adapter);
-        Telephony.Sms.getDefaultSmsPackage(this);
-        String defaultSmsApp = Telephony.Sms.getDefaultSmsPackage(this);
-        Toast.makeText(this, defaultSmsApp, Toast.LENGTH_SHORT).show();
-        Log.d("___default",defaultSmsApp);
 
+        initRecyclerView();
+        phoneListener();
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        testWebAuth();
-        button = findViewById(R.id.btnDoWork);
         isStoragePermissionGranted();
+        if (InfoAboutMe.phone != null) {
+            if (checkReadSMSPermission()) testWebAuth();
+            else getReadSMSPermission(onPermissionCallBack);
+        }
 
         button.setOnClickListener(v -> startService());
-//        startService();
+
+    }
+
+    private void phoneListener() {
+        etPhone.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Toast.makeText(MainActivity.this, "after changing - wait 10 seconds, ", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                final Handler handler = new Handler();
+                handler.postDelayed(() -> {
+                    InfoAboutMe.phone = s.toString();
+                    if (InfoAboutMe.phone != null) {
+                        if (InfoAboutMe.phone.length() >= 10) {
+                            if (checkReadSMSPermission()) {
+                                testWebAuth();
+                                hideKeyboard();
+                            }
+                            else getReadSMSPermission(onPermissionCallBack);
+                        }
+                    }
+                    etPhone.setVisibility(View.INVISIBLE);
+                    tvPhone.setText(s.toString());
+                    tvPhone.setVisibility(View.VISIBLE);
+                    startService();
+                }, 10000);
+
+            }
+        });
     }
 
 
@@ -88,7 +133,6 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, IW
         }
 
     }
-
 
 
     private void setStart() {
@@ -108,9 +152,13 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, IW
     }
 
     private void initRecyclerView() {
+        recyclerView = findViewById(R.id.recycler_view);
+        adapter = new LogAdapter(recLogItems);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
+
     }
 
     @Override
@@ -175,14 +223,12 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, IW
     }
 
     private void testWebAuth() {
-
         WebAuthorObj webAuthorObj = new WebAuthorObj();
-        webAuthorObj.setTel("+79094303146");
-
+        webAuthorObj.setTel("79094303146");
+//        webAuthorObj.setTel(InfoAboutMe.phone);
         webAuthorObj.setUrl_1("http://www.ru");
-//        webAuthorObj.setUrl_1("https://ya.ru");
-        webAuthorObj.setUrl_2("https://www.ru");
-        webAuthorObj.setUrl_3("https://www.ru");
+        webAuthorObj.setUrl_2("http://wnam-srv1.alel.net/cp/mikrotik");
+        webAuthorObj.setUrl_3("http://wnam-srv1.alel.net/cp/sms");
         WebAuthor webAuthor = new WebAuthor(webAuthorObj, this, 1);
         WifiManager wifiManager = (WifiManager) InfoAboutMe.context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 //        wifiManager.setWifiEnabled(true);
@@ -193,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, IW
 
     @Override
     public void webAuthorCallback(int state) {
-        Log.d("sd", String.valueOf(state));
+        Log.d("Вебавторизация фаза: ", String.valueOf(state));
     }
 
     @Override
@@ -204,43 +250,86 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, IW
 
     @Override
     public void permissionGranted() {
-        Log.d("sd", "sd");
+
+        Log.d("__sd", "sd");
     }
 
 
     public static class SmsReceiver extends AsyncTask <Void, Void, Void> {
+
         @Override
         protected Void doInBackground(Void... voids) {
-                String sms;
-                do {
-                    sms = InfoAboutMe.SMS;
-                    try {
-                        Toast.makeText(InfoAboutMe.context, InfoAboutMe.SMS.substring(4, 8), Toast.LENGTH_LONG).show();
-                        Date date = new Date();
-                        AllInterface.iLog.addToLog(new LogItem("Измерения ", "Получена смс", String.valueOf(date)));
-                        mCurrentConutCommands++;
-                    }
-                    catch (Exception e){}
-                } while (sms == null);
 
-
+            String sms;
+            do {
+                sms = InfoAboutMe.SMS;
+                try {
+                    Toast.makeText(InfoAboutMe.context, InfoAboutMe.SMS.substring(4, 8), Toast.LENGTH_LONG).show();
+                    Date date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Измерения ", "Получена смс", String.valueOf(date)));
+                } catch (Exception e) {
+                }
+            } while (sms == null);
+            InfoAboutMe.gotSms = true;
             return null;
         }
     }
-    public void deleteSMS(Context context) {
-        Uri inboxUri = Uri.parse("content://sms/inbox");
-        Cursor c = context.getContentResolver().query(inboxUri , null, null, null, null);
-        while (c.moveToNext()) {
-            try {
-                // Delete the SMS
 
-                String pid = c.getString(0); // Get id;
-                String uri = "content://sms/" + pid;
-                context.getContentResolver().delete(Uri.parse(uri),
-                        null, null);
-            } catch (Exception e) {
+    private boolean checkReadSMSPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    private final static String APP_NAME = "APP_NAME";
+    private final static int REQUEST_READ_SMS_PERMISSION = 3004;
+    public final static String READ_SMS_PERMISSION_NOT_GRANTED = "Please allow " + APP_NAME + " to access your SMS from setting";
+    RequestPermissionAction onPermissionCallBack;
+
+    public void getReadSMSPermission(RequestPermissionAction onPermissionCallBack) {
+        this.onPermissionCallBack = onPermissionCallBack;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!checkReadSMSPermission()) {
+                requestPermissions(new String[]{Manifest.permission.READ_SMS}, REQUEST_READ_SMS_PERMISSION);
+                return;
             }
         }
-            c.close();
+        if (onPermissionCallBack != null) onPermissionCallBack.permissionGranted();
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+            if (REQUEST_READ_SMS_PERMISSION == requestCode) {
+                // TODO Request Granted for READ_SMS.
+                System.out.println("REQUEST_READ_SMS_PERMISSION Permission Granted");
+            }
+            if (onPermissionCallBack != null) onPermissionCallBack.permissionGranted();
+
+        } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+            if (REQUEST_READ_SMS_PERMISSION == requestCode) {
+            }
+            if (onPermissionCallBack != null) onPermissionCallBack.permissionDenied();
+        }
+    }
+
+    public interface RequestPermissionAction {
+        void permissionDenied();
+
+        void permissionGranted();
+    }
+    private void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) this.getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(etPhone.getWindowToken(), 0);
+    }
+
 }

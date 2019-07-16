@@ -2,15 +2,20 @@ package com.example.refactoringwnamqos.enteties;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.net.HttpCookie;
+import java.util.List;
+
 import retrofit2.http.POST;
 
 public class StepTwoResponse {
+
+
     String dst;
     String username;
     String password;
     String mac;
     String ip;
-
+    String endPoint;
     @SerializedName("server-name")
     String serverName;
 
@@ -22,6 +27,17 @@ public class StepTwoResponse {
 
     @SerializedName("site-id")
     int siteId;
+
+    public String getEndPoint() {
+        return endPoint;
+    }
+
+    public void setEndPoint(String endPoint) {
+        this.endPoint = endPoint;
+    }
+
+
+
 
     public String getDst() {
         return dst;
@@ -93,5 +109,14 @@ public class StepTwoResponse {
 
     public void setSiteId(int siteId) {
         this.siteId = siteId;
+    }
+    List <HttpCookie> cookies;
+
+    public List <HttpCookie> getCookies() {
+        return cookies;
+    }
+
+    public void setCookies(List <HttpCookie> cookies) {
+        this.cookies = cookies;
     }
 }

@@ -28,64 +28,58 @@ public class SendMeasurement implements ISendMeasurement {
     private WSClient wsClient;
     private Gson mGson = new GsonBuilder().create();
 
-    public SendMeasurement(WSClient wsClient){
+    public SendMeasurement(WSClient wsClient) {
         this.wsClient = wsClient;
         AllInterface.iSendMeasurement = this;
 
     }
 
-    public void subscribe(){
+    public void subscribe() {
         // Receive greetings
-        Disposable dispTopic = wsClient.mStompClient.topic("/user/queue/measurement/send")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(topicMessage -> {
-                    Log.d(TAG, "Received " + topicMessage.getPayload());
-                    Date date = new Date();
-                    AllInterface.iLog.addToLog(new LogItem("Удачно","Ответ от сервера при отправке сообщения",String.valueOf(date)));
-                }, throwable -> {
-                    Date date = new Date();
-                    AllInterface.iLog.addToLog(new LogItem("Ошибка","Отправка измерения",String.valueOf(date)));
-                    Log.e(TAG, "Error on subscribe topic", throwable);
+        Disposable dispTopic = wsClient.mStompClient.topic("/user/queue/measurement/send").subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(topicMessage -> {
+            Log.d(TAG, "Received " + topicMessage.getPayload());
+            Date date = new Date();
+            AllInterface.iLog.addToLog(new LogItem("Удачно", "Ответ от сервера при отправке сообщения", String.valueOf(date)));
+        }, throwable -> {
+            Date date = new Date();
+            AllInterface.iLog.addToLog(new LogItem("Ошибка", "Отправка измерения", String.valueOf(date)));
+            Log.e(TAG, "Error on subscribe topic", throwable);
 
-                });
+        });
         wsClient.compositeDisposable.add(dispTopic);
     }
 
     @Override
     public void sendMeanObject(MeanObject meanObject) {
-        for(int i = 0; i < meanObject.getResults().size(); i++){
-            if(meanObject.getResults().get(i).getStatus()){
+        for (int i = 0; i < meanObject.getResults().size(); i++) {
+            if (meanObject.getResults().get(i).getStatus()) {
                 meanObject.setStatus(true);
-            }
-            else {
+            } else {
                 meanObject.setStatus(false);
                 break;
             }
         }
 
         String gsonStr = mGson.toJson(meanObject);
-        Log.d(TAG, "gson measurement/send "+gsonStr);
+        Log.d(TAG, "gson measurement/send " + gsonStr);
 
-        List<StompHeader> headers = new ArrayList<>();
+        List <StompHeader> headers = new ArrayList <>();
         String sid = String.valueOf(System.currentTimeMillis());
         headers.add(new StompHeader("sid", sid));
         headers.add(new StompHeader(StompHeader.DESTINATION, "/app/measurement/send"));
 
         StompMessage stompMessage = new StompMessage(StompCommand.SEND, headers, gsonStr);
 
-        wsClient.compositeDisposable.add(wsClient.mStompClient.send(stompMessage)
-                .compose(wsClient.applySchedulers())
-                .subscribe(() -> {
-                    Log.d(TAG, "STOMP echo send successfully");
-                    Date date = new Date();
-                    AllInterface.iLog.addToLog(new LogItem("Удачно","Измерение отправлено удачно "+gsonStr,String.valueOf(date)));
-                    RegOnService.isConnectAfterMeasumerent =false;
-                }, throwable -> {
-                    Log.d(TAG, "Error send STOMP echo", throwable);
-                    Date date = new Date();
-                    AllInterface.iLog.addToLog(new LogItem("Ошибка","Измерение отправлено неудачно",String.valueOf(date)));
-                    //toast(throwable.getMessage());
-                }));
+        wsClient.compositeDisposable.add(wsClient.mStompClient.send(stompMessage).compose(wsClient.applySchedulers()).subscribe(() -> {
+            Log.d(TAG, "STOMP echo send successfully");
+            Date date = new Date();
+            AllInterface.iLog.addToLog(new LogItem("Удачно", "Измерение отправлено удачно " + gsonStr, String.valueOf(date)));
+            RegOnService.isConnectAfterMeasumerent = false;
+        }, throwable -> {
+            Log.d(TAG, "Error send STOMP echo", throwable);
+            Date date = new Date();
+            AllInterface.iLog.addToLog(new LogItem("Ошибка", "Измерение отправлено неудачно", String.valueOf(date)));
+            //toast(throwable.getMessage());
+        }));
     }
 }
