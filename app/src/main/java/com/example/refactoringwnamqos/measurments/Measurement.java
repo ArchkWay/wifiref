@@ -337,15 +337,21 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
     @Override
     public void wifiScanCallBack(List <WifiItem> wifiItems, int code) {
         Log.d(TAG, "SCAN_WIFI - получен коллбек, код - " + code);
-        TCOMMAN_X_ID tcommanXId = mMeanObject.getResults().get(mCurrentConutCommands);
-        tcommanXId.setEnd(getTime());
-        if (code == 1) {
-            tcommanXId.setOutput("TIMEOUT");
-        } else {
-            tcommanXId.setOutput(wifiItems);
-            tcommanXId.setStatus(true);
+        try {
+            if (mMeanObject.getResults().size() >= mCurrentConutCommands) {
+                TCOMMAN_X_ID tcommanXId = mMeanObject.getResults().get(mCurrentConutCommands);
+                tcommanXId.setEnd(getTime());
+                if (code == 1) {
+                    tcommanXId.setOutput("TIMEOUT");
+                } else {
+                    tcommanXId.setOutput(wifiItems);
+                    tcommanXId.setStatus(true);
+                }
+                tcomman_x_ids.set(mCurrentConutCommands, tcommanXId);
+
+            }
+        } catch (Exception e) {
         }
-        tcomman_x_ids.set(mCurrentConutCommands, tcommanXId);
         mCurrentConutCommands++;
         start();
     }

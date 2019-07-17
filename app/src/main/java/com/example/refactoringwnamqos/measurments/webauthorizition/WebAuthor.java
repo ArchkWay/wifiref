@@ -10,6 +10,7 @@ import android.telephony.SmsMessage;
 import com.example.refactoringwnamqos.MainActivity;
 import com.example.refactoringwnamqos.enteties.StepFinalResponse;
 import com.example.refactoringwnamqos.enteties.StepFourResponse;
+import com.example.refactoringwnamqos.enteties.StepPostFinalResponse;
 import com.example.refactoringwnamqos.enteties.StepThreeResponse;
 import com.example.refactoringwnamqos.enteties.StepTwoResponse;
 import com.example.refactoringwnamqos.enteties.WebAuthorObj;
@@ -18,6 +19,7 @@ import com.example.refactoringwnamqos.InfoAboutMe;
 import com.example.refactoringwnamqos.enteties.LogItem;
 import com.example.refactoringwnamqos.intefaces.IWebAuthorCallBack;
 import com.example.refactoringwnamqos.intefaces.IWebCallBack1;
+import com.example.refactoringwnamqos.measurments.ConnectivityHelper;
 
 import java.net.HttpCookie;
 import java.util.ArrayList;
@@ -96,9 +98,20 @@ public class WebAuthor implements IWebCallBack1 {
                 date = new Date();
                 AllInterface.iLog.addToLog(new LogItem("WebAuthor", "callResponseFromServer() step=" + webAuthorObj.getStep() + " data=" + data, String.valueOf(date)));
                 StepFinalResponse stepFinalResponse = new StepFinalResponse();
-
-
-
+                if(cookies != null) {
+                    for (HttpCookie httpCookie : cookies) {
+                        try {
+                            stepFinalResponse.setEndpoind(httpCookie.getValue());
+                        }catch(Exception e){}
+                    }
+                }
+                stepFinal(stepFinalResponse);
+                break;
+            case 5:
+                date = new Date();
+                AllInterface.iLog.addToLog(new LogItem("WebAuthor", "callResponseFromServer() step=" + webAuthorObj.getStep() + " data=" + data, String.valueOf(date)));
+                StepPostFinalResponse stepPostFinalResponse = new StepPostFinalResponse();
+                stepPostFinal(stepPostFinalResponse);
         }
     }
 
@@ -129,7 +142,7 @@ public class WebAuthor implements IWebCallBack1 {
         MainActivity.SmsReceiver smsGetter = new MainActivity.SmsReceiver();
         smsGetter.execute();
         while (!InfoAboutMe.gotSms) {
-            stepFourResponse.setSmscode(InfoAboutMe.SMS);
+            webAuthorObj.getStepFourResponse().setSmscode(InfoAboutMe.SMS);
         }
         InfoAboutMe.gotSms = true;
 //        InfoAboutMe.context.registerReceiver(smsReceiver, new IntentFilter("android.provider.Telephony.SMS_RECEIVED"));
@@ -137,8 +150,17 @@ public class WebAuthor implements IWebCallBack1 {
         Date date = new Date();
         AllInterface.iLog.addToLog(new LogItem("WebAuthor", "step2()", String.valueOf(date)));
     }
-    public  void stepFinal(){
-
+    public  void stepFinal(StepFinalResponse stepFinalResponse){
+        OkRequest okRequest = new OkRequest(this);
+        webAuthorObj.setStep(5);
+        webAuthorObj.setStepFinalResponse(stepFinalResponse);
+        okRequest.postRequest(webAuthorObj);
+    }
+    public  void stepPostFinal(StepPostFinalResponse stepPostFinalResponse){
+        OkRequest okRequest = new OkRequest(this);
+        webAuthorObj.setStep(6);
+        webAuthorObj.setStepPostFinalResponse(stepPostFinalResponse);
+        okRequest.postRequest(webAuthorObj);
     }
 
     private StepTwoResponse parseResponseFirst(String input) {
@@ -270,32 +292,8 @@ public class WebAuthor implements IWebCallBack1 {
         return stepThreeResponse;
     }
 
-//    BroadcastReceiver smsReceiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//
-//            Bundle pudsBundle = intent.getExtras();
-//            Object[] pdus = (Object[]) pudsBundle.get("pdus");
-//            SmsMessage messages = SmsMessage.createFromPdu((byte[]) pdus[0]);
-//            Date date = new Date();
-//            AllInterface.iLog.addToLog(new LogItem("WebAuthor", "smsReceiver " + messages.getMessageBody(), String.valueOf(date)));
-//            //Toast.makeText(context, "SMS prinyato ot :"+messages.getOriginatingAddress()+"\n"+ messages.getMessageBody(), Toast.LENGTH_LONG).show();
-//            String[] smsItem = messages.getMessageBody().split(" ");
-//            context.unregisterReceiver(this);
-//            if (smsItem.length == 3) step3(smsItem[2]);
-//        }
-//    };
-
     //-------------------------------------------------------------------------------------
 
-    private void step3(String s) {
-        OkRequest okRequest = new OkRequest(this);
-        webAuthorObj.setStep(3);
-        webAuthorObj.setCode(s);
-        okRequest.postRequest(webAuthorObj);
-        Date date = new Date();
-        AllInterface.iLog.addToLog(new LogItem("WebAuthor", "step3()", String.valueOf(date)));
-    }
 
     class MyTimerTaskWDT extends TimerTask {
         @Override

@@ -111,7 +111,7 @@ public class LoadListSettings implements IWSClient, ILoadTaskCompleted {
             AllInterface.iLog.addToLog(new LogItem("Запуск системы", "LoadListSettings->ConTimerTask. Try connection", String.valueOf(date)));
             conTimer.cancel();
             conTimer = null;
-            startWSClient();
+//            startWSClient();
         }
     }
 

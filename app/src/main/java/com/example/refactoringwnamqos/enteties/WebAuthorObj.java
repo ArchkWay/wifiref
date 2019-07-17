@@ -11,6 +11,24 @@ public class WebAuthorObj {
     StepTwoResponse stepTwoResponse;
     StepThreeResponse stepThreeResponse;
     StepFourResponse stepFourResponse;
+    StepFinalResponse stepFinalResponse;
+    StepPostFinalResponse stepPostFinalResponse;
+
+    public StepPostFinalResponse getStepPostFinalResponse() {
+        return stepPostFinalResponse;
+    }
+
+    public void setStepPostFinalResponse(StepPostFinalResponse stepPostFinalResponse) {
+        this.stepPostFinalResponse = stepPostFinalResponse;
+    }
+
+    public StepFinalResponse getStepFinalResponse() {
+        return stepFinalResponse;
+    }
+
+    public void setStepFinalResponse(StepFinalResponse stepFinalResponse) {
+        this.stepFinalResponse = stepFinalResponse;
+    }
 
     public StepFourResponse getStepFourResponse() {
         return stepFourResponse;

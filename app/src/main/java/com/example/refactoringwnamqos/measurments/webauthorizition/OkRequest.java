@@ -16,6 +16,7 @@ import java.net.CookiePolicy;
 import java.net.HttpCookie;
 import java.util.Date;
 import java.util.List;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -31,6 +32,7 @@ public class OkRequest {
     IWebCallBack1 iWebCallBack1;
     OkHttpClient okHttpClient;
     CookieManager cookieManager;
+
     public OkRequest(IWebCallBack1 iWebCallBack1) {
         this.iWebCallBack1 = iWebCallBack1;
     }
@@ -67,9 +69,10 @@ public class OkRequest {
     }
 
     public void postRequest(WebAuthorObj webAuthorObj) {
-        if(cookieManager == null) cookieManager = new CookieManager();
+        if (cookieManager == null) cookieManager = new CookieManager();
         cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
-        if (okHttpClient == null) okHttpClient = new OkHttpClient.Builder().cookieJar(new JavaNetCookieJar(cookieManager)).build();
+        if (okHttpClient == null)
+            okHttpClient = new OkHttpClient.Builder().cookieJar(new JavaNetCookieJar(cookieManager)).build();
         StepTwoResponse stepTwoResponse = webAuthorObj.getStepTwoResponse();
         Request request = null;
         String requestBody;
@@ -89,44 +92,39 @@ public class OkRequest {
                 break;
             case 2:
                 url = webAuthorObj.getUrl_2();
-                RequestBody formBody = new FormBody.Builder()
-                        .add("dst", stepTwoResponse.getDst())
-                        .add("username", stepTwoResponse.getUsername())
-                        .add("password", stepTwoResponse.getPassword())
-                        .add("mac", stepTwoResponse.getMac())
-                        .add("ip", stepTwoResponse.getIp())
-                        .add("server-name", stepTwoResponse.getServerName())
-                        .add("server-address", stepTwoResponse.getServerAddress()).build();
+                RequestBody formBody = new FormBody.Builder().add("dst", stepTwoResponse.getDst()).add("username", stepTwoResponse.getUsername()).add("password", stepTwoResponse.getPassword()).add("mac", stepTwoResponse.getMac()).add("ip", stepTwoResponse.getIp()).add("server-name", stepTwoResponse.getServerName()).add("server-address", stepTwoResponse.getServerAddress()).build();
                 request = new Request.Builder().url(url).post(formBody).build();
-                CookieSyncManager.createInstance(InfoAboutMe.context);
-                CookieSyncManager.getInstance().startSync();
+//                CookieSyncManager.createInstance(InfoAboutMe.context);
+//                CookieSyncManager.getInstance().startSync();
 
                 break;
             case 3:
-                formBody = new FormBody.Builder()
-                        .add("phone", webAuthorObj.getTel())
-                        .build();
-                url = webAuthorObj.getUrl_3();
-                cookie = "wnam="+webAuthorObj.getStepThreeResponse().getCookies().get(0).getValue();
-                request = new Request.Builder()
-                        .url(url)
-                        .post(formBody)
-                        .header("Cookie", cookie)
-                        .build();
+                formBody = new FormBody.Builder().add("phone", webAuthorObj.getTel()).build();
+                url = webAuthorObj.getUrl_3() + "sms";
+                cookie = "wnam=" + webAuthorObj.getStepThreeResponse().getCookies().get(0).getValue();
+                request = new Request.Builder().url(url).post(formBody).header("Cookie", cookie).build();
                 break;
             case 4:
-                url = webAuthorObj.getUrl_3();
-                cookie = "wnam="+webAuthorObj.getStepThreeResponse().getCookies().get(0).getValue();
-                smscode = webAuthorObj.getStepFourResponse().getSmscode().substring(4, 8);
-                formBody = new FormBody.Builder()
-                        .add("smscode", smscode)
-                        .build();
-                    request = new Request.Builder()
-                        .url(url)
-                        .post(formBody)
-                        .header("Cookie", cookie)
-                        .build();
+                url = webAuthorObj.getUrl_3() + "sms";
+                cookie = "wnam=" + webAuthorObj.getStepThreeResponse().getCookies().get(0).getValue();
+//                smscode = webAuthorObj.getStepFourResponse().getSmscode().substring(4, 8);
+                smscode = InfoAboutMe.SMS.substring(4, 8);
+                formBody = new FormBody.Builder().add("smscode", smscode).build();
+                request = new Request.Builder().url(url).post(formBody).header("Cookie", cookie).build();
                 break;
+            case 5:
+                url = webAuthorObj.getUrl_3()
+                        + "58bdc4965e4df6273ac60210"
+//                      + webAuthorObj.getStepFinalResponse().getEndpoind()
+                        +"/";
+                request = new Request.Builder().url(url).get().build(); //58bdc4965e4df6273ac60210,  58bdc4965e4df6273ac60210
+            break;
+            case 6:
+                url = webAuthorObj.getUrl_3() + webAuthorObj.getStepPostFinalResponse().getEndPoint() +"/";
+                requestBody = "";
+                mediaType = MediaType.parse("application/x-www-form-urlencoded; charset=UTF-8");
+                body = RequestBody.create(mediaType, requestBody);
+                request = new Request.Builder().url(url).post(body).build();
         }
 
         okHttpClient.newCall(request).enqueue(new Callback() {
@@ -142,7 +140,7 @@ public class OkRequest {
             public void onResponse(Call call, Response response) throws IOException {
                 List <HttpCookie> cookies = cookieManager.getCookieStore().getCookies();
                 String okResponse = response.body().string();
-                    Date date = new Date();
+                Date date = new Date();
                 AllInterface.iLog.addToLog(new LogItem("OkRequest", "postRequest -> okHttpClient.newCall -> onResponse() = " + okResponse, String.valueOf(date)));
                 iWebCallBack1.callResponseFromServer(okResponse, cookies);
             }

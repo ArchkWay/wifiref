@@ -61,7 +61,7 @@ public class GetTask {
         StompMessage stompMessage = new StompMessage(StompCommand.SEND, headers, gsonStr);
 
         wsClient.compositeDisposable.add(wsClient.mStompClient.send(stompMessage)
-                .compose(wsClient.applySchedulers())
+//                .compose(wsClient.applySchedulers())
                 .subscribe(() -> {
                     Date date = new Date();
                     AllInterface.iLog.addToLog(new LogItem("GetTask -> send()", gsonStr,  String.valueOf(date)));

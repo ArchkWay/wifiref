@@ -4,13 +4,10 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
-import android.provider.Telephony;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -19,12 +16,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -49,8 +44,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.example.refactoringwnamqos.measurments.Measurement.mCurrentConutCommands;
-
 public class MainActivity extends AppCompatActivity implements IMainActivity, IWebAuthorCallBack, RPS_PermissionActivity.RequestPermissionAction {
 
     private RecyclerView recyclerView;
@@ -61,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, IW
     WorkWithLog workWithLog;
     private static final String TAG = "MainActivity";
     Button button;
-
+    boolean first;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,13 +72,10 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, IW
         phoneListener();
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         isStoragePermissionGranted();
-        if (InfoAboutMe.phone != null) {
-            if (checkReadSMSPermission()) testWebAuth();
-            else getReadSMSPermission(onPermissionCallBack);
-        }
-
         button.setOnClickListener(v -> startService());
-
+//        testWebAuth();
+        startService();
+        hideKeyboard();
     }
 
     private void phoneListener() {
@@ -97,7 +87,6 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, IW
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Toast.makeText(MainActivity.this, "after changing - wait 10 seconds, ", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -108,8 +97,12 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, IW
                     if (InfoAboutMe.phone != null) {
                         if (InfoAboutMe.phone.length() >= 10) {
                             if (checkReadSMSPermission()) {
-                                testWebAuth();
-                                hideKeyboard();
+                                if (!first) {
+                                    first = true;
+                                    testWebAuth();
+                                    hideKeyboard();
+                                    Toast.makeText(MainActivity.this, "after changing - wait 10 seconds, ", Toast.LENGTH_SHORT).show();
+                                }
                             }
                             else getReadSMSPermission(onPermissionCallBack);
                         }
@@ -224,11 +217,12 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, IW
 
     private void testWebAuth() {
         WebAuthorObj webAuthorObj = new WebAuthorObj();
+        webAuthorObj.setTel(etPhone.getText().toString());
         webAuthorObj.setTel("79094303146");
 //        webAuthorObj.setTel(InfoAboutMe.phone);
         webAuthorObj.setUrl_1("http://www.ru");
         webAuthorObj.setUrl_2("http://wnam-srv1.alel.net/cp/mikrotik");
-        webAuthorObj.setUrl_3("http://wnam-srv1.alel.net/cp/sms");
+        webAuthorObj.setUrl_3("http://wnam-srv1.alel.net/cp/");
         WebAuthor webAuthor = new WebAuthor(webAuthorObj, this, 1);
         WifiManager wifiManager = (WifiManager) InfoAboutMe.context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 //        wifiManager.setWifiEnabled(true);
