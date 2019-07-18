@@ -69,12 +69,16 @@ public class WSClient implements ISWClientConnect {
             switch (lifecycleEvent.getType()) {
                 case OPENED:
                     AllInterface.iLog.addToLog(new LogItem("WSClient", "connectStomp() Подключение удалось", String.valueOf(date)));
-                    if (iwsClient != null) iwsClient.iwsClientCallBack(mStompClient, 0);
+                    if (iwsClient != null) {
+                        iwsClient.iwsClientCallBack(mStompClient, 0);
+                    }
                     break;
                 case ERROR:
                     InfoAboutMe.stompClient = null;
                     AllInterface.iLog.addToLog(new LogItem("WSClient", "connectStomp() Ошибка подключения", String.valueOf(date)));
-                    if (iwsClient != null) iwsClient.iwsClientCallBack(null, 1);
+                    if (iwsClient != null) {
+                        iwsClient.iwsClientCallBack(null, 1);
+                    }
                     break;
                 case CLOSED:
                     InfoAboutMe.stompClient = null;

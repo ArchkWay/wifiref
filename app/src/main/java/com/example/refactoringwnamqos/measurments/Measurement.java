@@ -174,7 +174,7 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
             timer.schedule(timerTask, 5_000);
             date = new Date();
             AllInterface.iLog.addToLog(new LogItem("Measurement -> Timer", "Старт таймера", String.valueOf(date)));
-            AllInterface.iReconnectStomp.success();
+//            AllInterface.iReconnectStomp.success();
 
         }
     }
@@ -409,12 +409,13 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
         String url = command.getParameters().getUrl_1();
         if (ConnectivityHelper.isConnectedToNetwork(InfoAboutMe.context)) {
             Downloader downloader = new Downloader(this, timeout, tcommanXId);
+
             downloader.start(url);
 
         } else {
             tcommanXId.setOutput("ERROR");
             tcommanXId.setEnd(getTime());
-            tcommanXId.setStatus(true);
+            tcommanXId.setStatus(false);
             mMeanObject.getResults().set(mCurrentConutCommands, tcommanXId);
             mCurrentConutCommands++;
             start();
@@ -425,7 +426,7 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
     public void downloadEvent(TCOMMAN_X_ID tcomman_x_id, int state) {
         Log.d(TAG, "GET_FILE - получен коллбек. state = " + state);
         if (state == 0) {
-            tcomman_x_id.setOutput("OK");
+//            tcomman_x_id.setOutput("OK");
             tcomman_x_id.setStatus(true);
             try {
                 mMeanObject.getResults().set(mCurrentConutCommands, tcomman_x_id);

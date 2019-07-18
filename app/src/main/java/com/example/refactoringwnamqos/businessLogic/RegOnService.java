@@ -91,16 +91,16 @@ public class RegOnService implements IRegCallBack, IAllCallback, IGetTaskCallBac
     //----------------
     @Override
     public void fuckenCallBack(int state, FGetTask fGetTask) {
-//        if (!WorkService.isSeviceStart) {
-//            return;
-//        }
+        if (!WorkService.isSeviceStart) {
+            return;
+        }
         currId++;
         listTasks.add(fGetTask.getData());
         if (currId < countId) {
             //if not a task - returning for it
             getTask.send(listSchedules.get(currId).getTask());
-            JobToMerge job = new JobToMerge(listSchedules, listTasks, null);
-            iLoadTaskCompleted.jobCallback(job);
+//            JobToMerge job = new JobToMerge(listSchedules, listTasks, null);
+//            iLoadTaskCompleted.jobCallback(job);
         } else {
             JobToMerge job = new JobToMerge(listSchedules, listTasks, null);
             tranportMethods(wsClient);

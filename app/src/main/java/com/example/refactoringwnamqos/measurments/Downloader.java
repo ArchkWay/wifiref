@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.widget.Toast;
 
+import com.example.refactoringwnamqos.enteties.FileSize;
 import com.example.refactoringwnamqos.enteties.modelJson.jMeasurement.jSendMeasurement.TCOMMAN_X_ID;
 import com.example.refactoringwnamqos.intefaces.AllInterface;
 import com.example.refactoringwnamqos.InfoAboutMe;
@@ -36,7 +37,7 @@ public class Downloader {
     private TimerTask timerTaskWDT;
     TCOMMAN_X_ID tcomman_x_id;
     String url;
-    long fileSize;
+    long fileLong;
     public Downloader(IDownloader iDownloader, int timeout, TCOMMAN_X_ID tcomman_x_id) {
         this.iDownloader = iDownloader;
         this.timeout = timeout;
@@ -63,7 +64,7 @@ public class Downloader {
     }
 
 
-    private class DownloaderBackground extends AsyncTask <Void, Void, Void> {
+    private class DownloaderBackground extends AsyncTask <Void, Void, Long> {
         private long downloadId;
         private IDownloader iDownloader;
         private int timeout;
@@ -81,7 +82,7 @@ public class Downloader {
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Long doInBackground(Void... voids) {
             if (timerWDT != null) {
                 timerWDT.cancel();
                 timerWDT = null;
@@ -100,7 +101,7 @@ public class Downloader {
                     if (broadcastedDownloadID == downloadId) {
                         if (getDownLoadStatus() == DownloadManager.STATUS_SUCCESSFUL) {
                             if (timerWDT != null) timerWDT.cancel();
-                            iDownloader.downloadEvent(tcomman_x_id, 0);
+                            iDownloader.downloadEvent(tcomman_x_id, 0);/////////
                             Date date = new Date();
                             AllInterface.iLog.addToLog(new LogItem("Downloader", "Удачно", String.valueOf(date)));
                             Toast.makeText(InfoAboutMe.context, "Download complete", Toast.LENGTH_SHORT).show();
@@ -131,10 +132,14 @@ public class Downloader {
                 AllInterface.iLog.addToLog(new LogItem("Downloader", "Нет пермишина для работы с памятью", String.valueOf(date)));
             }
             File file = new File(Environment.getExternalStorageDirectory() + "/menesured", "sss.jpg");
-            fileSize = file.length();
+            fileLong = file.length();
+            FileSize fileSize = new FileSize();
+            fileSize.setFileSize(String.valueOf(fileSize));
+            fileSize.setStatus(true);
             tcomman_x_id.setOutput(fileSize);
+//            tcomman_x_id.setEnd(String.valueOf(fileSize));
             deleteFile();
-            return null;
+            return fileLong;
         }
 
         private int getDownLoadStatus() {
@@ -159,13 +164,13 @@ public class Downloader {
 
         public boolean deleteFile() {
             File file = new File(Environment.getExternalStorageDirectory() + "/menesured", "sss.jpg");
-
+            tcomman_x_id.setOutput(file.length());
             if (file.exists()) {
                 file.delete();
-                //Toast.makeText(InfoAboutMe.context, "File find and delete", Toast.LENGTH_SHORT).show();
+                Toast.makeText(InfoAboutMe.context, "File find and delete", Toast.LENGTH_SHORT).show();
                 return true;
             } else {
-                //Toast.makeText(InfoAboutMe.context, "File not delete", Toast.LENGTH_SHORT).show();
+                Toast.makeText(InfoAboutMe.context, "File not delete", Toast.LENGTH_SHORT).show();
                 return false;
             }
         }

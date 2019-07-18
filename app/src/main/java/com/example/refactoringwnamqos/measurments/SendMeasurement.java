@@ -36,14 +36,17 @@ public class SendMeasurement implements ISendMeasurement {
 
     public void subscribe() {
         // Receive greetings
-        Disposable dispTopic = wsClient.mStompClient.topic("/user/queue/measurement/send").subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(topicMessage -> {
-            Log.d(TAG, "Received " + topicMessage.getPayload());
-            Date date = new Date();
-            AllInterface.iLog.addToLog(new LogItem("Удачно", "Ответ от сервера при отправке сообщения", String.valueOf(date)));
-        }, throwable -> {
-            Date date = new Date();
-            AllInterface.iLog.addToLog(new LogItem("Ошибка", "Отправка измерения", String.valueOf(date)));
-            Log.e(TAG, "Error on subscribe topic", throwable);
+        Disposable dispTopic = wsClient.mStompClient.topic("/user/queue/measurement/send")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(topicMessage -> {
+                    Log.d(TAG, "Received " + topicMessage.getPayload());
+                    Date date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Удачно","Ответ от сервера при отправке сообщения",String.valueOf(date)));
+                }, throwable -> {
+                    Date date = new Date();
+                    AllInterface.iLog.addToLog(new LogItem("Ошибка","Отправка измерения",String.valueOf(date)));
+                    Log.e(TAG, "Error on subscribe topic", throwable);
 
         });
         wsClient.compositeDisposable.add(dispTopic);

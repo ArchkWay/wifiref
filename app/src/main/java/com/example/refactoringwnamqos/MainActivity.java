@@ -29,6 +29,7 @@ import com.example.refactoringwnamqos.enteties.LogItem;
 import com.example.refactoringwnamqos.intefaces.AllInterface;
 import com.example.refactoringwnamqos.intefaces.IMainActivity;
 import com.example.refactoringwnamqos.intefaces.IWebAuthorCallBack;
+import com.example.refactoringwnamqos.intefaces.IWebCallBack1;
 import com.example.refactoringwnamqos.logs.LogAdapter;
 import com.example.refactoringwnamqos.logs.WorkWithLog;
 import com.example.refactoringwnamqos.measurments.webauthorizition.WebAuthor;
@@ -40,11 +41,12 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements IMainActivity, IWebAuthorCallBack, RPS_PermissionActivity.RequestPermissionAction {
+public class MainActivity extends AppCompatActivity implements IMainActivity, IWebAuthorCallBack, IWebCallBack1 {
 
     private RecyclerView recyclerView;
     private LogAdapter adapter;
@@ -55,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, IW
     private static final String TAG = "MainActivity";
     Button button;
     boolean first;
+    boolean firstToast;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,10 +75,9 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, IW
         phoneListener();
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         isStoragePermissionGranted();
-        button.setOnClickListener(v -> startService());
+//        button.setOnClickListener(v -> startService());
 //        testWebAuth();
-        startService();
-        hideKeyboard();
+//        startService();
     }
 
     private void phoneListener() {
@@ -87,6 +89,10 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, IW
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (!firstToast) {
+                    firstToast = true;
+                    Toast.makeText(MainActivity.this, "after changing - wait 10 seconds, ", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -95,23 +101,24 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, IW
                 handler.postDelayed(() -> {
                     InfoAboutMe.phone = s.toString();
                     if (InfoAboutMe.phone != null) {
-                        if (InfoAboutMe.phone.length() >= 10) {
+                        if (InfoAboutMe.phone.length() == 11) {
                             if (checkReadSMSPermission()) {
                                 if (!first) {
                                     first = true;
                                     testWebAuth();
                                     hideKeyboard();
                                     Toast.makeText(MainActivity.this, "after changing - wait 10 seconds, ", Toast.LENGTH_SHORT).show();
+                                    etPhone.setVisibility(View.INVISIBLE);
+                                    tvPhone.setText(s.toString());
+                                    tvPhone.setVisibility(View.VISIBLE);
                                 }
                             }
                             else getReadSMSPermission(onPermissionCallBack);
                         }
+                        else Toast.makeText(MainActivity.this, "Number is not correct", Toast.LENGTH_SHORT).show();
                     }
-                    etPhone.setVisibility(View.INVISIBLE);
-                    tvPhone.setText(s.toString());
-                    tvPhone.setVisibility(View.VISIBLE);
-                    startService();
-                }, 10000);
+
+                    }, 10000);
 
             }
         });
@@ -129,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, IW
 
 
     private void setStart() {
-        button.setText("Завершить работу");
+//        button.setText("Завершить работу");
         WorkService.isSeviceStart = true;
         Intent serviceIntent = new Intent(this, WorkService.class);
         ContextCompat.startForegroundService(this, serviceIntent);
@@ -218,8 +225,8 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, IW
     private void testWebAuth() {
         WebAuthorObj webAuthorObj = new WebAuthorObj();
         webAuthorObj.setTel(etPhone.getText().toString());
-        webAuthorObj.setTel("79094303146");
-//        webAuthorObj.setTel(InfoAboutMe.phone);
+//        webAuthorObj.setTel("79094303146");
+        webAuthorObj.setTel(InfoAboutMe.phone);
         webAuthorObj.setUrl_1("http://www.ru");
         webAuthorObj.setUrl_2("http://wnam-srv1.alel.net/cp/mikrotik");
         webAuthorObj.setUrl_3("http://wnam-srv1.alel.net/cp/");
@@ -233,20 +240,28 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, IW
 
     @Override
     public void webAuthorCallback(int state) {
+        if(state == 6){
+//            startService();
+        }
         Log.d("Вебавторизация фаза: ", String.valueOf(state));
     }
 
     @Override
-    public void permissionDenied() {
-        RPS_PermissionActivity rps_permissionActivity = new RPS_PermissionActivity();
-        rps_permissionActivity.checkReadSMSPermission();
+    public void callResponseFromServer(String data, List <HttpCookie> cookies) {
+
     }
 
-    @Override
-    public void permissionGranted() {
-
-        Log.d("__sd", "sd");
-    }
+//    @Override
+//    public void permissionDenied() {
+//        RPS_PermissionActivity rps_permissionActivity = new RPS_PermissionActivity();
+//        rps_permissionActivity.checkReadSMSPermission();
+//    }
+//
+//    @Override
+//    public void permissionGranted() {
+//
+//        Log.d("__sd", "sd");
+//    }
 
 
     public static class SmsReceiver extends AsyncTask <Void, Void, Void> {

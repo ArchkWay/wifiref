@@ -108,23 +108,30 @@ public class OkRequest {
                 url = webAuthorObj.getUrl_3() + "sms";
                 cookie = "wnam=" + webAuthorObj.getStepThreeResponse().getCookies().get(0).getValue();
 //                smscode = webAuthorObj.getStepFourResponse().getSmscode().substring(4, 8);
-                smscode = InfoAboutMe.SMS.substring(4, 8);
+                smscode = InfoAboutMe.SMS.substring(4, 8);//cookie 1d8dc507-1a35-4155-9ebd-8fe4ce29c2d3
                 formBody = new FormBody.Builder().add("smscode", smscode).build();
                 request = new Request.Builder().url(url).post(formBody).header("Cookie", cookie).build();
                 break;
             case 5:
-                url = webAuthorObj.getUrl_3()
-                        + "58bdc4965e4df6273ac60210"
-//                      + webAuthorObj.getStepFinalResponse().getEndpoind()
-                        +"/";
-                request = new Request.Builder().url(url).get().build(); //58bdc4965e4df6273ac60210,  58bdc4965e4df6273ac60210
-            break;
-            case 6:
-                url = webAuthorObj.getUrl_3() + webAuthorObj.getStepPostFinalResponse().getEndPoint() +"/";
+                url = webAuthorObj.getUrl_3() + webAuthorObj.getStepPostFinalResponse().getEndPoint();
+                cookie = "wnam=" + webAuthorObj.getStepThreeResponse().getCookies().get(0).getValue();
                 requestBody = "";
                 mediaType = MediaType.parse("application/x-www-form-urlencoded; charset=UTF-8");
-                body = RequestBody.create(mediaType, requestBody);
-                request = new Request.Builder().url(url).post(body).build();
+                formBody = RequestBody.create(mediaType, requestBody);
+//                request = new Request.Builder().url(url).post(body).build();
+                request = new Request.Builder().url(url).post(formBody).header("Cookie", cookie).build();
+            break;
+            case 6:
+                url = webAuthorObj.getStepFinalResponse().getUrl();
+                formBody = new FormBody.Builder()
+                        .add("username", stepTwoResponse.getUsername())
+                        .add("password", stepTwoResponse.getPassword())
+                        .add("dst","http://bash.im")
+                        .build();
+
+                cookie = "wnam=" + webAuthorObj.getStepThreeResponse().getCookies().get(0).getValue();
+                request = new Request.Builder().url(url).post(formBody).header("Cookie", cookie).build();
+
         }
 
         okHttpClient.newCall(request).enqueue(new Callback() {

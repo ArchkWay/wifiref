@@ -115,7 +115,6 @@ public class RPS_PermissionActivity extends AppCompatActivity {
         Snackbar.make(RPS_PermissionActivity.this.findViewById(R.id.activity_permission), "Storage permission isn't granted" , Snackbar.LENGTH_LONG)
                 .setAction("SETTINGS", v -> {
                     openApplicationSettings();
-
                     Toast.makeText(getApplicationContext(),
                             "Open Permissions and grant the Storage permission",
                             Toast.LENGTH_SHORT)

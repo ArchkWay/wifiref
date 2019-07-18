@@ -1,12 +1,5 @@
 package com.example.refactoringwnamqos.measurments.webauthorizition;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.Bundle;
-import android.telephony.SmsMessage;
-
 import com.example.refactoringwnamqos.MainActivity;
 import com.example.refactoringwnamqos.enteties.StepFinalResponse;
 import com.example.refactoringwnamqos.enteties.StepFourResponse;
@@ -19,7 +12,6 @@ import com.example.refactoringwnamqos.InfoAboutMe;
 import com.example.refactoringwnamqos.enteties.LogItem;
 import com.example.refactoringwnamqos.intefaces.IWebAuthorCallBack;
 import com.example.refactoringwnamqos.intefaces.IWebCallBack1;
-import com.example.refactoringwnamqos.measurments.ConnectivityHelper;
 
 import java.net.HttpCookie;
 import java.util.ArrayList;
@@ -27,8 +19,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import okhttp3.Cookie;
 
 
 public class WebAuthor implements IWebCallBack1 {
@@ -92,27 +82,34 @@ public class WebAuthor implements IWebCallBack1 {
                 if (data.indexOf("\"code\":0") > -1) iWebAuthorCallBack.webAuthorCallback(0);
                 else iWebAuthorCallBack.webAuthorCallback(2);
                 StepFourResponse stepFourResponse = new StepFourResponse();
-                step4PostNumber(stepFourResponse);
+                step4PostSMS(stepFourResponse);
                 break;
             case 4:
                 date = new Date();
                 AllInterface.iLog.addToLog(new LogItem("WebAuthor", "callResponseFromServer() step=" + webAuthorObj.getStep() + " data=" + data, String.valueOf(date)));
-                StepFinalResponse stepFinalResponse = new StepFinalResponse();
-                if(cookies != null) {
-                    for (HttpCookie httpCookie : cookies) {
-                        try {
-                            stepFinalResponse.setEndpoind(httpCookie.getValue());
-                        }catch(Exception e){}
-                    }
-                }
-                stepFinal(stepFinalResponse);
+                StepPostFinalResponse stepPostFinalResponse = new StepPostFinalResponse();
+//                stepPostFinal(stepPostFinalResponse);
+                OkRequest okRequest = new OkRequest(this);
+                webAuthorObj.setStep(5);
+                webAuthorObj.setStepPostFinalResponse(stepPostFinalResponse);
+                okRequest.postRequest(webAuthorObj);
                 break;
             case 5:
                 date = new Date();
                 AllInterface.iLog.addToLog(new LogItem("WebAuthor", "callResponseFromServer() step=" + webAuthorObj.getStep() + " data=" + data, String.valueOf(date)));
-                StepPostFinalResponse stepPostFinalResponse = new StepPostFinalResponse();
-                stepPostFinal(stepPostFinalResponse);
+                StepFinalResponse stepFinalResponse;
+                okRequest = new OkRequest(this);
+                webAuthorObj.setStep(6);
+                stepFinalResponse = parseFinal(data);
+                webAuthorObj.setStepFinalResponse(stepFinalResponse);
+                okRequest.postRequest(webAuthorObj);
+                break;
+            case 6:
+                iWebAuthorCallBack.webAuthorCallback(6);
+                break;
         }
+
+
     }
 
     //----------------------------------------------------------------------------------------
@@ -135,7 +132,7 @@ public class WebAuthor implements IWebCallBack1 {
         AllInterface.iLog.addToLog(new LogItem("WebAuthor", "step2()", String.valueOf(date)));
     }
 
-    public void step4PostNumber(StepFourResponse stepFourResponse) {
+    public void step4PostSMS(StepFourResponse stepFourResponse) {
         OkRequest okRequest = new OkRequest(this);
         webAuthorObj.setStep(4);
         webAuthorObj.setStepFourResponse(stepFourResponse);
@@ -150,17 +147,19 @@ public class WebAuthor implements IWebCallBack1 {
         Date date = new Date();
         AllInterface.iLog.addToLog(new LogItem("WebAuthor", "step2()", String.valueOf(date)));
     }
-    public  void stepFinal(StepFinalResponse stepFinalResponse){
-        OkRequest okRequest = new OkRequest(this);
-        webAuthorObj.setStep(5);
-        webAuthorObj.setStepFinalResponse(stepFinalResponse);
-        okRequest.postRequest(webAuthorObj);
-    }
-    public  void stepPostFinal(StepPostFinalResponse stepPostFinalResponse){
-        OkRequest okRequest = new OkRequest(this);
-        webAuthorObj.setStep(6);
-        webAuthorObj.setStepPostFinalResponse(stepPostFinalResponse);
-        okRequest.postRequest(webAuthorObj);
+
+
+    private StepFinalResponse parseFinal(String input){
+        StepFinalResponse stepFinalResponse = new StepFinalResponse();
+        parseJSOnWords(input);
+        int n = words.size();
+        for(String string : words){
+            if(string.contains("/login")){
+                stepFinalResponse.setUrl(string);
+            }
+        }
+
+        return stepFinalResponse;
     }
 
     private StepTwoResponse parseResponseFirst(String input) {
@@ -256,6 +255,31 @@ public class WebAuthor implements IWebCallBack1 {
         String word = "";
         for (int i = 0; i < letters.size(); i++) {
             if (letters.get(i).equals("\"")) {
+                i = i + 1;
+                if (!wordStart) {
+                    wordStart = true;
+                } else {
+                    wordStart = false;
+                    words.add(word);
+                    word = "";
+                }
+            }
+            if (wordStart) {
+                word += (letters.get(i));
+            }
+        }
+    }
+    private void parseJSOnWords(String input) {
+        boolean wordStart = false;
+        words.clear();
+        letters.clear();
+        for (int i = 0; i < input.length() - 1; i++) {
+            letters.add(input.substring(i, i + 1));
+        }
+        letters.add(input.substring(input.length() - 1));
+        String word = "";
+        for (int i = 0; i < letters.size(); i++) {
+            if (letters.get(i).equals("\'")) {
                 i = i + 1;
                 if (!wordStart) {
                     wordStart = true;
