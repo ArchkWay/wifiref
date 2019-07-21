@@ -17,6 +17,7 @@ import com.example.refactoringwnamqos.intefaces.AllInterface;
 import com.example.refactoringwnamqos.intefaces.ISendMeasureCallBack;
 import com.example.refactoringwnamqos.intefaces.IWebAuthorCallBack;
 import com.example.refactoringwnamqos.logs.WorkWithLog;
+import com.example.refactoringwnamqos.measurments.ConnectivityHelper;
 import com.example.refactoringwnamqos.measurments.ISendMeasurment;
 import com.example.refactoringwnamqos.measurments.webauthorizition.WebAuthor;
 
@@ -47,25 +48,29 @@ public class WorkService extends Service implements IWebAuthorCallBack {
 
         AllInterface.iLog.addToLog(new LogItem("WorkService", "onStartCommand -> Запуск сервиса", String.valueOf(date)));
         InfoAboutMe.context = getApplicationContext();
+        RegOnService.isConnectAfterMeasumerent = false;
+        if(!ConnectivityHelper.isConnectedToNetwork(getApplicationContext())) testWebAuth();
 
         LoadListSettings loadListSettings = new LoadListSettings();
         loadListSettings.start(1);
-        RegOnService.isConnectAfterMeasumerent = false;
     }
 
     private void testWebAuth() {
-
         WebAuthorObj webAuthorObj = new WebAuthorObj();
-        webAuthorObj.setTel("79094303146");
-
+        try {
+        webAuthorObj.setTel(InfoAboutMe.phone);
         webAuthorObj.setUrl_1("http://www.ru");
         webAuthorObj.setUrl_2("http://wnam-srv1.alel.net/cp/mikrotik");
-        webAuthorObj.setUrl_3("http://wnam-srv1.alel.net/cp/sms");
+        webAuthorObj.setUrl_3("http://wnam-srv1.alel.net/cp/");
         WebAuthor webAuthor = new WebAuthor(webAuthorObj, this, 1);
         WifiManager wifiManager = (WifiManager) InfoAboutMe.context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        webAuthor.step1();
+        }
+        catch (Exception e){}
+
 //        wifiManager.setWifiEnabled(true);
 //        wifiManager.enableNetwork(0, true);
-        webAuthor.step1();
+
     }
     @Override
     public void onDestroy() {

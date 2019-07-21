@@ -15,5 +15,6 @@ public class InfoAboutMe {
     public static long startTime = 0;
     public static Context context;
     public static StompClient stompClient;
+    public static boolean Measurment;
 
 }

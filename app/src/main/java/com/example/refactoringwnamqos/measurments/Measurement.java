@@ -81,6 +81,7 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
     }
 
     private int countCommand(FGetTaskData task) {
+//        task = null;
         return task.getCommands().size();
     }
 
@@ -221,27 +222,25 @@ public class Measurement implements IWifiScanCallBack, IWifiConnectCallBack, IWa
 
     //------------------------------------------------------------------------------------
     private void webAuth() {
-
-        FGetTaskCommands command = mCommands.get(mCurrentConutCommands);
         TCOMMAN_X_ID tcommanXId = mMeanObject.getResults().get(mCurrentConutCommands);
         tcommanXId.setBegin(getTime());
-        String tel = command.getParameters().getTel();
-        String url_1 = command.getParameters().getUrl_1();
-        String url_2 = command.getParameters().getUrl_2();
-        String url_3 = command.getParameters().getUrl_3();
-
-        int timeout = mCommands.get(mCurrentConutCommands).getTimeout();
-
-        WebAuthorObj webAuthorObj = new WebAuthorObj();
-        webAuthorObj.setTel(tel);
-        webAuthorObj.setUrl_1(url_1);
-        webAuthorObj.setUrl_2(url_2);
-        webAuthorObj.setUrl_3(url_3);
-
-        WebAuthor webAuthor = new WebAuthor(webAuthorObj, this, timeout);
-        webAuthor.step1();
+        InfoAboutMe.Measurment = true;
+            WebAuthorObj webAuthorObj = new WebAuthorObj();
+            try {
+                webAuthorObj.setTel(InfoAboutMe.phone);
+                webAuthorObj.setUrl_1("http://www.ru");
+                webAuthorObj.setUrl_2("http://wnam-srv1.alel.net/cp/mikrotik");
+                webAuthorObj.setUrl_3("http://wnam-srv1.alel.net/cp/");
+                WebAuthor webAuthor = new WebAuthor(webAuthorObj, this, 1);
+                WifiManager wifiManager = (WifiManager) InfoAboutMe.context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                webAuthor.step1();
+            }
+            catch (Exception e){}
+        tcommanXId.setEnd(getTime());
+        InfoAboutMe.Measurment = false;
         tcommanXId.setStatus(true);
         mMeanObject.getResults().set(mCurrentConutCommands, tcommanXId);
+        mCurrentConutCommands++;
     }
 
 

@@ -211,25 +211,52 @@ public class Wifi implements IWifi {
     }
 
     private String reverseIpAdres(String addr) {
+        String address = "";
+        String chunkNum = "";
+        int firstAmount = 0;
+        boolean one = false;
+        boolean two = false;
+        boolean three = false;
+        List <String> chunks = new ArrayList <>();
         List <String> letters = new ArrayList <>();
         for (int i = 0; i < addr.length() - 1; i++) {
             letters.add(addr.substring(i, i + 1));
         }
         letters.add(addr.substring(addr.length() - 1));
-        addr = "";
-        final int lettersBlock = 4;
-        int offset = 4;
-        if (letters.get(1).equals(".") || letters.get(2).equals(".")) {
-            addr += letters.get(letters.size() - (offset - 1)) + letters.get(letters.size() - (offset - 2)) + letters.get(letters.size() - (offset - 3)) + letters.get(letters.size() - offset);
-            offset += lettersBlock;
-            addr += letters.get(letters.size() - (offset - 1)) + letters.get(letters.size() - (offset - 2)) + letters.get(letters.size() - (offset - 3)) + letters.get(letters.size() - offset);
-            offset += lettersBlock;
-            addr += letters.get(letters.size() - (offset - 1)) + letters.get(letters.size() - (offset - 2)) + letters.get(letters.size() - (offset - 3)) + letters.get(letters.size() - offset);
-            offset += 1;
-            for (int i = letters.size() - offset; i >= 0; i--) {
-                addr += letters.get(0);
+        for (int i = 0; i < letters.size(); i++) {
+            if (letters.get(i).equals(".") && !one && !two && !three) {
+                one = true;
+                firstAmount = i;
+                for (int j = 0; j < firstAmount; j++) {
+                    chunkNum += letters.get(j);
+                }
+                chunks.add(chunkNum);
+                continue;
+            }
+            if (letters.get(i).equals(".") && one && !two && !three) {
+                two = true;
+                chunkNum = "";
+                for (int j = firstAmount+1; j < i; j++) {
+                    chunkNum += letters.get(j);
+                }
+                firstAmount = i;
+                chunks.add(chunkNum);
+                continue;
+            }
+            if (letters.get(i).equals(".") && one && two && !three) {
+                three = true;
+                chunkNum = "";
+                for (int j = firstAmount+1; j < i; j++) {
+                    chunkNum += letters.get(j);
+                }
+                chunks.add(chunkNum);
+                chunks.add(addr.substring(i+1));
+                for(int w = chunks.size(); w> 0; w--) {
+                    address += chunks.get(w-1)+".";
+                }
+                address = address.substring(0, address.length()-1);
             }
         }
-        return addr;
+        return address;
     }
 }

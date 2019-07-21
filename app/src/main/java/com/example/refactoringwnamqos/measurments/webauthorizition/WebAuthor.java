@@ -174,14 +174,14 @@ public class WebAuthor implements IWebCallBack1 {
         boolean serverAddres = false;
         boolean client = false;
         boolean siteId = false;
-        parseInputOnWords(input);
+        parseInputToWords(input);
         for (int i = 1; i < words.size(); i++) {
             switch (words.get(i - 1)) {
                 case "wnamlogin":
                     if (!wnamlogin) {
-                        httpName = words.get(i).substring(0, 25);
+                        httpName = words.get(i);
 //                        webAuthorObj.setUrl_2(httpName);
-                        stepTwoResponse.setEndPoint(words.get(i).substring(25));
+                        stepTwoResponse.setEndPoint(words.get(i));
                         wnamlogin = true;
                     }
                     break;
@@ -244,7 +244,7 @@ public class WebAuthor implements IWebCallBack1 {
         return stepTwoResponse;
     }
 
-    private void parseInputOnWords(String input) {
+    private void parseInputToWords(String input) {
         boolean wordStart = false;
         words.clear();
         letters.clear();
@@ -298,7 +298,7 @@ public class WebAuthor implements IWebCallBack1 {
     private StepThreeResponse parseTwoResponse(String input, List <HttpCookie> cookies) {
         StepThreeResponse stepThreeResponse = new StepThreeResponse();
         boolean sms = false;
-        parseInputOnWords(input);
+        parseInputToWords(input);
         for (int i = 1; i < words.size(); i++) {
             if (words.get(i - 1).equals("sms") && !sms) {
                 stepThreeResponse.setEndPoint(words.get(i));

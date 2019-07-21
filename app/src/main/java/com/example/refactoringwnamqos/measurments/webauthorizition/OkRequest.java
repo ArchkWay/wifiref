@@ -91,8 +91,15 @@ public class OkRequest {
                 request = new Request.Builder().url(url).post(body).build();
                 break;
             case 2:
-                url = webAuthorObj.getUrl_2();
-                RequestBody formBody = new FormBody.Builder().add("dst", stepTwoResponse.getDst()).add("username", stepTwoResponse.getUsername()).add("password", stepTwoResponse.getPassword()).add("mac", stepTwoResponse.getMac()).add("ip", stepTwoResponse.getIp()).add("server-name", stepTwoResponse.getServerName()).add("server-address", stepTwoResponse.getServerAddress()).build();
+                url = webAuthorObj.getStepTwoResponse().getEndPoint();
+                RequestBody formBody = new FormBody.Builder()
+                        .add("dst", stepTwoResponse.getDst())
+                        .add("username", stepTwoResponse.getUsername())
+                        .add("password", stepTwoResponse.getPassword())
+                        .add("mac", stepTwoResponse.getMac())
+                        .add("ip", stepTwoResponse.getIp())
+                        .add("server-name", stepTwoResponse.getServerName())
+                        .add("server-address", stepTwoResponse.getServerAddress()).build();
                 request = new Request.Builder().url(url).post(formBody).build();
 //                CookieSyncManager.createInstance(InfoAboutMe.context);
 //                CookieSyncManager.getInstance().startSync();

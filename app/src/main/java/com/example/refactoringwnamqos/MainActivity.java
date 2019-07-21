@@ -32,6 +32,7 @@ import com.example.refactoringwnamqos.intefaces.IWebAuthorCallBack;
 import com.example.refactoringwnamqos.intefaces.IWebCallBack1;
 import com.example.refactoringwnamqos.logs.LogAdapter;
 import com.example.refactoringwnamqos.logs.WorkWithLog;
+import com.example.refactoringwnamqos.measurments.ConnectivityHelper;
 import com.example.refactoringwnamqos.measurments.webauthorizition.WebAuthor;
 import com.example.refactoringwnamqos.enteties.WebAuthorObj;
 import com.example.refactoringwnamqos.phone.RPS_PermissionActivity;
@@ -77,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, IW
         isStoragePermissionGranted();
 //        button.setOnClickListener(v -> startService());
 //        testWebAuth();
-//        startService();
+        startService();
     }
 
     private void phoneListener() {
@@ -105,12 +106,14 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, IW
                             if (checkReadSMSPermission()) {
                                 if (!first) {
                                     first = true;
-                                    testWebAuth();
-                                    hideKeyboard();
                                     Toast.makeText(MainActivity.this, "after changing - wait 10 seconds, ", Toast.LENGTH_SHORT).show();
                                     etPhone.setVisibility(View.INVISIBLE);
                                     tvPhone.setText(s.toString());
                                     tvPhone.setVisibility(View.VISIBLE);
+                                    hideKeyboard();
+
+                                    testWebAuth();
+                                    startService();
                                 }
                             }
                             else getReadSMSPermission(onPermissionCallBack);
@@ -240,8 +243,8 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, IW
 
     @Override
     public void webAuthorCallback(int state) {
-        if(state == 6){
-//            startService();
+        if(state == 6 && InfoAboutMe.Measurment){
+            startService();
         }
         Log.d("Вебавторизация фаза: ", String.valueOf(state));
     }
