@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, IW
         isStoragePermissionGranted();
 //        button.setOnClickListener(v -> startService());
 //        testWebAuth();
-        startService();
+//        startService();
     }
 
     private void phoneListener() {
@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, IW
                                     hideKeyboard();
 
                                     testWebAuth();
-                                    startService();
+//                                    startService();
                                 }
                             }
                             else getReadSMSPermission(onPermissionCallBack);
@@ -243,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivity, IW
 
     @Override
     public void webAuthorCallback(int state) {
-        if(state == 6 && InfoAboutMe.Measurment){
+        if(state == 6 ){
             startService();
         }
         Log.d("Вебавторизация фаза: ", String.valueOf(state));

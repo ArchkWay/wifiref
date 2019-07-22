@@ -236,7 +236,7 @@ public class Wifi implements IWifi {
             if (letters.get(i).equals(".") && one && !two && !three) {
                 two = true;
                 chunkNum = "";
-                for (int j = firstAmount+1; j < i; j++) {
+                for (int j = firstAmount + 1; j < i; j++) {
                     chunkNum += letters.get(j);
                 }
                 firstAmount = i;
@@ -246,15 +246,15 @@ public class Wifi implements IWifi {
             if (letters.get(i).equals(".") && one && two && !three) {
                 three = true;
                 chunkNum = "";
-                for (int j = firstAmount+1; j < i; j++) {
+                for (int j = firstAmount + 1; j < i; j++) {
                     chunkNum += letters.get(j);
                 }
                 chunks.add(chunkNum);
-                chunks.add(addr.substring(i+1));
-                for(int w = chunks.size(); w> 0; w--) {
-                    address += chunks.get(w-1)+".";
+                chunks.add(addr.substring(i + 1));
+                for (int w = chunks.size(); w > 0; w--) {
+                    address += chunks.get(w - 1) + ".";
                 }
-                address = address.substring(0, address.length()-1);
+                address = address.substring(0, address.length() - 1);
             }
         }
         return address;

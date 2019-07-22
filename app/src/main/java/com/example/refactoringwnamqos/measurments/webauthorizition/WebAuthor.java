@@ -64,6 +64,11 @@ public class WebAuthor implements IWebCallBack1 {
                     iWebAuthorCallBack.webAuthorCallback(2);
                     return;
                 }
+                if(!data.contains("wnam")){
+                    timerWDT.cancel();
+                    iWebAuthorCallBack.webAuthorCallback(6);
+                    return;
+                }
                 if(stepTwoResponse.getDst() != null) {
                     step2(stepTwoResponse);
                 }
